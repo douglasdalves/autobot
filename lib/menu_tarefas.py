@@ -47,7 +47,7 @@ def abrir_taref():
             os.system('cls') or None
             os.startfile(myfile_programas)
         elif resposta == 6:
-            print('{}'.format(op7), 'Captura de Tela')
+            print('{}'.format(op6), 'Captura de Tela')
             gerar_print()
         elif resposta == 7:
             frase_retorno()

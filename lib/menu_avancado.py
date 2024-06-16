@@ -35,7 +35,7 @@ def abrir_avanc():
             os.system('cls') or None
             os.startfile(myfile_netstat)
         elif resposta == 4:
-            print('{}'.format(op5), 'Captura de Tela')
+            print('{}'.format(op4), 'Captura de Tela')
             gerar_print()
         elif resposta == 5:
             frase_retorno()

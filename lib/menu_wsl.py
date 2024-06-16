@@ -61,16 +61,16 @@ def abrir_wsl():
             subprocess.run(myfile_docker, shell=True)
             os.system('wsl docker ps')
         elif resposta == 5:
-            print('{}'.format(op4), 'Stop Docker')
+            print('{}'.format(op5), 'Stop Docker')
             #os.chdir(myfile_docker1)
             os.system('wsl docker ps')
             subprocess.run(myfile_stop, shell=True)
             os.system('wsl docker ps')
         elif resposta == 6:
-            print('{}'.format(op5), 'Captura de Tela')
+            print('{}'.format(op6), 'Captura de Tela')
             gerar_print()
         elif resposta == 7:
-            print('{}'.format(op6), 'Retorno do Menu')
+            print('{}'.format(op7), 'Retorno do Menu')
             frase_retorno()
         else:
             leia_opcao()

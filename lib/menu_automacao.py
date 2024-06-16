@@ -39,14 +39,14 @@ def abrir_autom():
             print('{}'.format(op3), 'Info de Hardware')
             info_hardware()
         elif resposta == 4:
-            print('{}'.format(op5), 'Rotas do Windows')
+            print('{}'.format(op4), 'Rotas do Windows')
             route()
         elif resposta == 5:
-            print('{}'.format(op6), 'Processos Windows')
+            print('{}'.format(op5), 'Processos Windows')
             os.system('cls') or None
             os.startfile(myfile_processos)
         elif resposta == 6:
-            print('{}'.format(op7), 'Captura de Tela')
+            print('{}'.format(op6), 'Captura de Tela')
             gerar_print()
         elif resposta == 7:
             frase_retorno()
