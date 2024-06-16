@@ -27,8 +27,8 @@ def wsl_status():
 t_menu = 'Status da WSL'
 t_menu1 = 'Iniciando o WSL2'
 t_menu2 = 'Stop do WSL2'
-t_menu3 = 'Start docker - test'
-t_menu4 = 'Stop docker - test'
+t_menu3 = 'Start docker'
+t_menu4 = 'Stop docker'
 
 #------------------------------------------------
 #Codigo do menu 6
