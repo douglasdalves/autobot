@@ -16,14 +16,13 @@ myfile_netstat = r'C:/sistema_python/funcoes/netstat_rede.py'
 t_menu = 'TraceRouter e Pathping'
 t_menu1 = 'Testar o DNS'
 t_menu2 = 'Testar com Netstat'
-t_menu3 = 'Teste1'
 
 #------------------------------------------------
 #Codigo do menu 3
 
 def abrir_avanc():
     while True:
-        resposta = menu_secund([t_menu,t_menu1,t_menu2,t_menu3,opcao_captura,opcao_retorno])
+        resposta = menu_secund([t_menu,t_menu1,t_menu2,opcao_captura,opcao_retorno])
         if resposta == 1:
             os.system('cls') or None
             print('{}'.format(op1), 'Testes do Trace na Seanet')
@@ -36,11 +35,9 @@ def abrir_avanc():
             os.system('cls') or None
             os.startfile(myfile_netstat)
         elif resposta == 4:
-            print('{}'.format(op4), 'Test')
-        elif resposta == 5:
             print('{}'.format(op5), 'Captura de Tela')
             gerar_print()
-        elif resposta == 6:
+        elif resposta == 5:
             frase_retorno()
         else:
             leia_opcao()

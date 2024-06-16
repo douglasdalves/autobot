@@ -57,11 +57,11 @@ def abrir_wsl():
             #sleep(2)
             #wsl_status()
         elif resposta == 4:
-            print('{}'.format(op4), 'Teste Start Docker')
+            print('{}'.format(op4), 'Start Docker')
             subprocess.run(myfile_docker, shell=True)
             os.system('wsl docker ps')
         elif resposta == 5:
-            print('{}'.format(op4), 'Test Stop Docker')
+            print('{}'.format(op4), 'Stop Docker')
             #os.chdir(myfile_docker1)
             os.system('wsl docker ps')
             subprocess.run(myfile_stop, shell=True)

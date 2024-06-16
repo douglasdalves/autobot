@@ -15,13 +15,10 @@ import os
 t_menu = 'Versao do Windows'
 t_menu1 = 'Detalhes do Windows'
 t_menu2 = 'Informacao do Hardware'
-t_menu3 = 'Relatorio de bateria'
-t_menu4 = 'Rotas do Windows'
-t_menu5 = 'Processos Windows'
-t_menu6 = 'Energy Report'
+t_menu3 = 'Rotas do Windows'
+t_menu4 = 'Processos Windows'
 
 myfile_cp_logs = r'C:/scripts_logs'
-myfile_energy_report = r'C:/sistema_python/funcoes_tarefas/energy-report.bat'
 myfile_processos = r'C:/sistema_python/funcoes_tarefas/processos_wind.bat'
 
 #------------------------------------------------
@@ -29,7 +26,7 @@ myfile_processos = r'C:/sistema_python/funcoes_tarefas/processos_wind.bat'
 
 def abrir_autom():
     while True:
-        resposta = menu_secund([t_menu,t_menu1,t_menu2,t_menu3,t_menu4,t_menu5,t_menu6,opcao_captura,opcao_retorno])
+        resposta = menu_secund([t_menu,t_menu1,t_menu2,t_menu3,t_menu4,opcao_captura,opcao_retorno])
         if resposta == 1:
             os.system('cls') or None
             print('{}'.format(op1), 'Detalhes da Build do SO')
@@ -42,26 +39,16 @@ def abrir_autom():
             print('{}'.format(op3), 'Info de Hardware')
             info_hardware()
         elif resposta == 4:
-            print('Opcao 4')
-            os.system('cls') or None
-        elif resposta == 5:
             print('{}'.format(op5), 'Rotas do Windows')
             route()
-        elif resposta == 6:
+        elif resposta == 5:
             print('{}'.format(op6), 'Processos Windows')
             os.system('cls') or None
             os.startfile(myfile_processos)
-        elif resposta == 7:
-            print('{}'.format(op7), 'Energy Report')
-            os.startfile(myfile_energy_report)
-            sleep(35)            
-            os.chdir(myfile_cp_logs)
-            sleep(35)
-            os.startfile('energy-report.html')
-        elif resposta == 8:
+        elif resposta == 6:
             print('{}'.format(op7), 'Captura de Tela')
             gerar_print()
-        elif resposta == 9:
+        elif resposta == 7:
             frase_retorno()
         else:
             leia_opcao()
