@@ -17,11 +17,6 @@ from tqdm import tqdm
 espaco = print('\n')
 
 myfile_saindo = r'C:/sistema_python/funcoes/saindo_sistema.py'
-
-myfile_captura = r'C:/scripts_logs/captura/print_sistema.png'
-myfile_local_captura = r'C:/scripts_logs/captura'
-LOG_FILENAME = datetime.now().strftime('Print_aplic_%d_%m_%Y_%H_%M_%S.png')
-
 myfile_bkp_pip = r'C:/scripts_logs/info_pacotes/backupPIP_python.txt'
 
 
@@ -103,27 +98,6 @@ def leia_opcao():
 
 #--------------------------------------------
 ## configuracoes das opcoes
-
-
-#----# Captura de tela (print)
-opcao_captura = colored('Captura de Tela', 'red')
-
-def gerar_print():
-    """
-    -> Trabalha com a geracao de print e salvar o mesmo
-    : Avisa sobre a captura
-    : Realiza a captura
-    : Salva no local informado
-    : Troca de diretorio
-    : Renomeia o arquivo
-    """
-    print('\n', '-- Captura de Tela -- ')
-    print('Print gerado em Scripts_logs', '\n')
-    capturar = pyautogui.screenshot()
-    capturar.save(myfile_captura)
-    os.chdir(myfile_local_captura)
-    os.rename('print_sistema.png', LOG_FILENAME)
-
 
 #---# ('Retornando para o menu principal')
 

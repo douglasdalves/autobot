@@ -58,7 +58,7 @@ while True:
         print('\n')
         os.system('wsl docker ps')
     elif resposta == 7:
-        gerar_print()
+        print
     elif resposta == 8:
         funcao_sair()
     else:
