@@ -12,14 +12,15 @@ t_menu3 = 'Install Programas'
 t_menu4 = 'Dados WSL'
 t_menu5 = 'Dados Docker'
 t_menu6 = 'Dados AWS cli'
-t_menu7 = 'Abrir o vsCode'
+t_menu7 = 'Dados Kubernetes'
+t_menu8 = 'Abrir o vsCode'
 
 #------------------------------------------------
 #Codigo do menu 2
 
 def abrir_taref():
     while True:
-        resposta = menu_secund([t_menu1,t_menu2,t_menu3,t_menu4,t_menu5,t_menu6,t_menu7,opcao_retorno])
+        resposta = menu_secund([t_menu1,t_menu2,t_menu3,t_menu4,t_menu5,t_menu6,t_menu7,t_menu8,opcao_retorno])
         if resposta == 1:
             os.system('cls') or None
             exec(open("./funcoes_tarefas/pacotes_detalhes.py").read())
@@ -41,8 +42,10 @@ def abrir_taref():
             versao_cli()
             listar_perfis()
         elif resposta == 7:
-            os.system('code .')
+            dev_kube()
         elif resposta == 8:
+            os.system('code .')
+        elif resposta == 9:
             frase_retorno()
         else:
             leia_opcao()
@@ -62,9 +65,10 @@ def dev_vagrant():
 
 def dev_docker():
     cabecalho1('Funcoes em Docker')
-    os.system('docker ps -a')
+    os.system('wsl docker ps -a')
     print('\n')
-    os.system('docker images')
+    cabecalho1('Listando Imagens Docker')
+    os.system('wsl docker images')
     print('\n')
 
 def dev_wsl():
@@ -87,3 +91,9 @@ def versao_cli():
 def listar_perfis():
     cabecalho1('Listando perfis configurados')
     os.system('aws configure list-profiles')
+
+def dev_kube():
+    cabecalho1('Listando os Clusters')
+    os.system('wsl kind get clusters')
+    cabecalho1('Dados de context do kubectx')
+    os.system('wsl kubectl config get-contexts')
