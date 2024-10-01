@@ -208,3 +208,10 @@ def wsl_status():
     print('\n')
     subprocess.run(["wsl", "-l", "-v"])
     print('\n')
+
+
+def limpar_tela():
+    """
+    Limpa a tela do terminal, compatível com sistemas Windows e Unix.
+    """
+    os.system('cls' if os.name == 'nt' else 'clear')

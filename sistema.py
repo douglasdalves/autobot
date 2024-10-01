@@ -34,25 +34,25 @@ mlist = ['Testes de Conexao',
 while True:
     resposta = menu([mlist[0], mlist[1], mlist[2], mlist[3], mlist[4], mlist[5], mlist[6], mlist[7]])
     if resposta == 1:
-        os.system('cls') or None
+        limpar_tela()
         exec(open("./funcoes/conexao_seanet.py").read())
     elif resposta == 2:
-        os.system('cls') or None
+        limpar_tela()
         abrir_taref()
     elif resposta == 3:
-        os.system('cls') or None
+        limpar_tela()
         wsl_status()
     elif resposta == 4:
-        os.system('cls') or None
+        limpar_tela()
         print('\n','Stop da WSL2','\n')
         os.system('wsl --shutdown && wsl -l -v')
     elif resposta == 5:
-        os.system('cls') or None
+        limpar_tela()
         subprocess.run(myfile_docker, shell=True)
         os.system('wsl docker ps')
         print('\n')
     elif resposta == 6:
-        os.system('cls') or None
+        limpar_tela()
         os.system('wsl docker ps')
         subprocess.run(myfile_stop, shell=True)
         print('\n')
