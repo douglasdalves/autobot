@@ -1,0 +1,8 @@
+
+pyautogui 
+pillow 
+termcolor 
+requests 
+tqdm 
+boto3 
+urllib3
