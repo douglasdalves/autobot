@@ -4,18 +4,18 @@
 
 #// docker variaveis
 
-status_docker="wsl service docker status"
-subindo_docker="wsl sudo service docker start"
-stop_docker="wsl sudo service docker stop"
+status_docker="service docker status"
+subindo_docker="sudo service docker start"
+stop_docker="sudo service docker stop"
 
 
 #// containers
-docker_ps="wsl docker ps -a"
-docker_log="wsl docker logs"
+docker_ps="docker ps -a"
+docker_log="docker logs"
 
 
 #// portainer variaveis
-portainer_stop="wsl docker stop portainer"
+portainer_stop="docker stop portainer"
 
 
 #// menu para automatizar

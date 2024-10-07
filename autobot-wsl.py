@@ -21,6 +21,41 @@ def executar_comando(comando, shell=False):
     except Exception as e:
         print(colored(f"Ocorreu um erro inesperado: {e}", 'red'))
 
+
+def comando_vscode():
+    caminho = "/root/devops/automation-py/autobot"
+            
+            # Verifica se o caminho existe
+    if os.path.exists(caminho):
+                # Altera o diretório para o caminho especificado
+        os.chdir(caminho)
+                
+                # Abre o VS Code no diretório atual
+        executar_comando(['code', '.'])
+    else:
+        print(f"O caminho {caminho} não existe.")
+
+
+def executar_script_subpasta():
+    # Definir o caminho da subpasta e o nome do script .sh
+    caminho_subpasta = os.path.join(os.getcwd(), '/root/devops/automation-py/autobot/lib_autobot')
+    script = 'start_docker.sh'
+    
+    # Verifica se o arquivo .sh existe na subpasta
+    caminho_completo_script = os.path.join(caminho_subpasta, script)
+    if os.path.exists(caminho_completo_script):
+        # Muda o diretório para a subpasta
+        os.chdir(caminho_subpasta)
+        
+        # Torna o script executável, se necessário
+        os.chmod(script, 0o755)
+        
+        # Executa o script .sh
+        executar_comando(['bash', script])
+    else:
+        print(f"O script {script} não foi encontrado no caminho {caminho_subpasta}.")
+
+
 def cabecalho1(texto):
     print(colored(f"--- {texto} ---", 'green', attrs=['bold']))
 
@@ -85,7 +120,7 @@ def list_version():
 
 def menu():
     while True:
-        print("\nEscolha uma opção:")
+        print("\nEscolha uma opção:\n")
         print("1 - Iniciar docker")
         print("2 - Parar docker")
         print("3 - Dados Docker")
@@ -93,12 +128,13 @@ def menu():
         print("5 - Listar Versões")
         print("6 - Dados EKS")
         print("7 - Dados Helm")
-        print("8 - Sair")
+        print("8 - VS code")
+        print("9 - Sair")
 
-        opcao = input("Digite o número da opção: ")
+        opcao = input("\nDigite o número da opção: ")
 
         if opcao == '1':
-            print('teste')
+            executar_script_subpasta()
         elif opcao == '2':
             print('teste')
         elif opcao == '3':
@@ -113,7 +149,9 @@ def menu():
         elif opcao == '7':
             list_helm()
         elif opcao == '8':
-            print("Saindo... Até a próxima!")
+            comando_vscode()
+        elif opcao == '9':
+            print("\nSaindo... Até a próxima!\n")
             break
         else:
             print("Opção inválida, tente novamente.")
