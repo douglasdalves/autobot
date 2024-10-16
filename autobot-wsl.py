@@ -8,8 +8,31 @@ import subprocess
 import os
 from termcolor import colored
 
+
+# ------------------------------------------
+# Format colored
+# ------------------------------------------
+
+def cabecalho_sub(texto):
+    print(colored(f"--- {texto} ---", 'green', attrs=['bold']))
+
+def cabecalho_cor(texto):
+    print(colored(f"{texto}", 'red', attrs=['bold']))
+
+def cabecalho_menu(texto):
+    print(colored(f"\n---- AUTOBOT ----", 'green', attrs=['reverse', 'bold']), end='') 
+    print(colored(f" {texto}", 'green', attrs=['reverse']))
+
+
 # ------------------------------------------
 # libs
+# ------------------------------------------
+
+from lib_autobot.docker_comandos import fun_start_docker
+from lib_autobot.docker_comandos import fun_stop_docker
+
+# ------------------------------------------
+# libs - func
 # ------------------------------------------
 
 def executar_comando(comando, shell=False):
@@ -36,37 +59,14 @@ def comando_vscode():
         print(f"O caminho {caminho} não existe.")
 
 
-def executar_script_subpasta():
-    # Definir o caminho da subpasta e o nome do script .sh
-    caminho_subpasta = os.path.join(os.getcwd(), '/root/devops/automation-py/autobot/lib_autobot')
-    script = 'start_docker.sh'
-    
-    # Verifica se o arquivo .sh existe na subpasta
-    caminho_completo_script = os.path.join(caminho_subpasta, script)
-    if os.path.exists(caminho_completo_script):
-        # Muda o diretório para a subpasta
-        os.chdir(caminho_subpasta)
-        
-        # Torna o script executável, se necessário
-        os.chmod(script, 0o755)
-        
-        # Executa o script .sh
-        executar_comando(['bash', script])
-    else:
-        print(f"O script {script} não foi encontrado no caminho {caminho_subpasta}.")
-
-
-def cabecalho1(texto):
-    print(colored(f"--- {texto} ---", 'green', attrs=['bold']))
-
 # ------------------------------------------
 # ------------------------------------------
 
 def dev_docker():
-    cabecalho1('Funções em Docker')
+    cabecalho_sub('Funções em Docker')
     executar_comando(['docker', 'ps', '-a'])
     print('\n')
-    cabecalho1('Listando Imagens Docker')
+    cabecalho_sub('Listando Imagens Docker')
     executar_comando(['docker', 'images'])
     print('\n')
 
@@ -74,7 +74,7 @@ def dev_docker():
 # ------------------------------------------
 
 def listar_credenciais():
-    cabecalho1('Listando credenciais AWS (PARCIAL)')
+    cabecalho_sub('Listando credenciais AWS (PARCIAL)')
     try:
         with open(os.path.expanduser("~/.aws/credentials"), 'r') as f:
             for line in f:
@@ -84,74 +84,78 @@ def listar_credenciais():
         print(colored('Arquivo de credenciais não encontrado.', 'red'))
 
 def listar_configuracoes():
-    cabecalho1('Listando configurações AWS')
+    cabecalho_sub('Listando configurações AWS')
     executar_comando(['cat', os.path.expanduser("~/.aws/config")], shell=True)
 
 def listar_perfis():
-    cabecalho1('Listando perfis configurados')
+    cabecalho_sub('Listando perfis configurados')
     executar_comando(['aws', 'configure', 'list-profiles'])
 
 # ------------------------------------------
 # ------------------------------------------
 
 def dev_kube():
-    cabecalho1('Listando os Clusters')
+    cabecalho_sub('Listando os Clusters')
     executar_comando(['kind', 'get', 'clusters'])
-    cabecalho1('Dados de context do kubectx')
+    cabecalho_sub('Dados de context do kubectx')
     executar_comando(['kubectl', 'config', 'get-contexts'])
 
 def list_helm():
-    cabecalho1('Listando Dados do Helm')
+    cabecalho_sub('Listando Dados do Helm')
     executar_comando(['helm', 'list'])
 
 def list_version():
-    cabecalho1('Listar versões instaladas')
+    cabecalho_sub('Listar versões instaladas')
     executar_comando(['docker', '--version'])
     executar_comando(['python3', '--version'])
     executar_comando(['aws', '--version'])
     executar_comando(['kubectl', 'version', '--client', '--output=yaml'])
     executar_comando(['kubectl', 'version', '--client'])
-    executar_comando(['helm', '--version'])
+    executar_comando(['helm', 'version'])
 
 
 # ------------------------------------------
-# Menu
+# Menu geral
 # ------------------------------------------
 
 def menu():
     while True:
-        print("\nEscolha uma opção:\n")
+        cabecalho_menu("\nEscolha uma opção:\n")
         print("1 - Iniciar docker")
         print("2 - Parar docker")
         print("3 - Dados Docker")
-        print("4 - Dados AWS CLI")
-        print("5 - Listar Versões")
-        print("6 - Dados EKS")
-        print("7 - Dados Helm")
-        print("8 - VS code")
-        print("9 - Sair")
+        print("4 - Status Docker")
+        print("5 - Dados AWS CLI")
+        print("6 - Listar Versões")
+        print("7 - Dados EKS")
+        print("8 - Dados Helm")
+        print("9 - VS code")
+        print("10 - Sair")
 
         opcao = input("\nDigite o número da opção: ")
 
         if opcao == '1':
-            executar_script_subpasta()
+            fun_start_docker()
         elif opcao == '2':
-            print('teste')
+            fun_stop_docker()
         elif opcao == '3':
             dev_docker()
         elif opcao == '4':
+            executar_comando(['service', 'docker', 'status', 'status'])
+            #executar_comando(['docker', 'ps','|', 'grep', 'portainerer'])
+        elif opcao == '5':
             listar_credenciais()
             listar_perfis()
-        elif opcao == '5':
-            list_version()
         elif opcao == '6':
-            dev_kube()
+            list_version()
         elif opcao == '7':
-            list_helm()
+            dev_kube()
         elif opcao == '8':
-            comando_vscode()
+            list_helm()
         elif opcao == '9':
-            print("\nSaindo... Até a próxima!\n")
+            comando_vscode()
+        elif opcao == '10':
+            cabecalho_cor("\nSaindo... Até a próxima!\n")
             break
         else:
             print("Opção inválida, tente novamente.")
