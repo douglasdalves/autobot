@@ -30,33 +30,9 @@ def cabecalho_menu(texto):
 
 from lib_autobot.docker_comandos import fun_start_docker
 from lib_autobot.docker_comandos import fun_stop_docker
-
-# ------------------------------------------
-# libs - func
-# ------------------------------------------
-
-def executar_comando(comando, shell=False):
-    try:
-        resultado = subprocess.run(comando, shell=shell, check=True, text=True, capture_output=True)
-        print(resultado.stdout)
-    except subprocess.CalledProcessError as e:
-        print(colored(f"Erro ao executar o comando: {comando}\nErro: {e.stderr}", 'red'))
-    except Exception as e:
-        print(colored(f"Ocorreu um erro inesperado: {e}", 'red'))
-
-
-def comando_vscode():
-    caminho = "/root/devops/automation-py/autobot"
-            
-            # Verifica se o caminho existe
-    if os.path.exists(caminho):
-                # Altera o diretório para o caminho especificado
-        os.chdir(caminho)
-                
-                # Abre o VS Code no diretório atual
-        executar_comando(['code', '.'])
-    else:
-        print(f"O caminho {caminho} não existe.")
+from lib_autobot.docker_comandos import verificar_docker_running
+from lib_autobot.lib_comandos import executar_comando
+from lib_autobot.lib_comandos import comando_vscode
 
 
 # ------------------------------------------
@@ -94,15 +70,57 @@ def listar_perfis():
 # ------------------------------------------
 # ------------------------------------------
 
+def verificar_kind_running():
+    try:
+        # Executa o comando 'kind get clusters'
+        result = subprocess.run(['kind', 'get', 'clusters'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        # Verifica se a saída contém clusters
+        if result.stdout.strip():  # Se houver algo na saída, o kind está rodando
+            print(colored(f"King está rodando.", 'blue'))
+            executar_comando(['kind', 'get', 'clusters'])
+        else:
+            print(colored(f"King não está rodando.", 'red'))
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+
+
+def verificar_helm_running():
+    try:
+        # Executa o comando 'kind get clusters'
+        result = subprocess.run(['helm', 'list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        # Verifica se a saída contém clusters
+        if result.stdout.strip():  # Se houver algo na saída, o kind está rodando
+            print(colored(f"Helm Disponível.", 'blue'))
+            executar_comando(['helm', 'list'])
+        else:
+            print(colored(f"Helm não está Disponível.", 'red'))
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+
+
+# Executa o comando kubectl config get-contexts
+# Passa o resultado para awk '{print $1, $2}'
+# Decodifica o resultado de bytes para string
+def consulta_kubectl():
+    process1 = subprocess.Popen(['kubectl', 'config', 'get-contexts'], stdout=subprocess.PIPE)
+    process2 = subprocess.Popen(['grep', '-v', 'NAME'], stdin=process1.stdout, stdout=subprocess.PIPE)
+    process3 = subprocess.Popen(['awk', '{print $1, $2}'], stdin=process2.stdout, stdout=subprocess.PIPE)
+    output, error = process3.communicate()
+    print(output.decode('utf-8'))
+
+
 def dev_kube():
-    cabecalho_sub('Listando os Clusters')
-    executar_comando(['kind', 'get', 'clusters'])
+    cabecalho_sub('Listando Kind Clusters')
+    verificar_kind_running()
     cabecalho_sub('Dados de context do kubectx')
-    executar_comando(['kubectl', 'config', 'get-contexts'])
+    consulta_kubectl()
 
 def list_helm():
     cabecalho_sub('Listando Dados do Helm')
-    executar_comando(['helm', 'list'])
+    #executar_comando(['helm', 'list'])
+    verificar_helm_running()
 
 def list_version():
     cabecalho_sub('Listar versões instaladas')
@@ -123,8 +141,8 @@ def menu():
         cabecalho_menu("\nEscolha uma opção:\n")
         print("1 - Iniciar docker")
         print("2 - Parar docker")
-        print("3 - Dados Docker")
-        print("4 - Status Docker")
+        print("3 - Status Docker")
+        print("4 - Dados Docker")        
         print("5 - Dados AWS CLI")
         print("6 - Listar Versões")
         print("7 - Dados EKS")
@@ -139,10 +157,10 @@ def menu():
         elif opcao == '2':
             fun_stop_docker()
         elif opcao == '3':
-            dev_docker()
-        elif opcao == '4':
-            executar_comando(['service', 'docker', 'status', 'status'])
+            verificar_docker_running()
             #executar_comando(['docker', 'ps','|', 'grep', 'portainerer'])
+        elif opcao == '4':
+            dev_docker()
         elif opcao == '5':
             listar_credenciais()
             listar_perfis()

@@ -1,6 +1,11 @@
+# ------------------------------------------
+# import
+# ------------------------------------------
+
 import subprocess
 from time import sleep
 import time
+from termcolor import colored
 
 # ------------------------------------------
 # ------------------------------------------
@@ -20,6 +25,21 @@ portainer_stop = "docker stop portainer"
 log_portainer = "docker logs -n 3 portainer"
 
 # ------------------------------------------
+# ------------------------------------------
+
+def verificar_docker_running():
+    try:
+        # Executa o comando 'service docker status'
+        result = subprocess.run(['service', 'docker', 'status'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        # Verifica se a saída contém a palavra 'running'
+        if 'is running' in result.stdout:
+            print(colored(f"Docker está rodando.", 'blue'))
+        else:
+            print(colored(f"Docker não está rodando.", 'red'))
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+
 # ------------------------------------------
 
 # Função para executar comandos no terminal
