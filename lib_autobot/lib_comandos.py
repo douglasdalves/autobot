@@ -5,6 +5,22 @@
 import subprocess
 import os
 from termcolor import colored
+from time import sleep
+import time
+
+# ------------------------------------------
+# Format colored
+# ------------------------------------------
+
+def cabecalho_sub(texto):
+    print(colored(f"--- {texto} ---", 'green', attrs=['bold']))
+
+def cabecalho_cor(texto):
+    print(colored(f"{texto}", 'red', attrs=['bold']))
+
+def cabecalho_menu(texto):
+    print(colored(f"\n---- AUTOBOT ----", 'green', attrs=['reverse', 'bold']), end='') 
+    print(colored(f" {texto}", 'green', attrs=['reverse']))
 
 # ------------------------------------------
 # libs - func

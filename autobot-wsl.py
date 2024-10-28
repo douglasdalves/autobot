@@ -1,28 +1,5 @@
 #!/usr/bin/env python3
 
-# ------------------------------------------
-# import
-# ------------------------------------------
-
-import subprocess
-import os
-from termcolor import colored
-
-
-# ------------------------------------------
-# Format colored
-# ------------------------------------------
-
-def cabecalho_sub(texto):
-    print(colored(f"--- {texto} ---", 'green', attrs=['bold']))
-
-def cabecalho_cor(texto):
-    print(colored(f"{texto}", 'red', attrs=['bold']))
-
-def cabecalho_menu(texto):
-    print(colored(f"\n---- AUTOBOT ----", 'green', attrs=['reverse', 'bold']), end='') 
-    print(colored(f" {texto}", 'green', attrs=['reverse']))
-
 
 # ------------------------------------------
 # libs
@@ -31,20 +8,9 @@ def cabecalho_menu(texto):
 from lib_autobot.docker_comandos import fun_start_docker
 from lib_autobot.docker_comandos import fun_stop_docker
 from lib_autobot.docker_comandos import verificar_docker_running
-from lib_autobot.lib_comandos import executar_comando
-from lib_autobot.lib_comandos import comando_vscode
+from lib_autobot.docker_comandos import verificar_docker_dados
 
-
-# ------------------------------------------
-# ------------------------------------------
-
-def dev_docker():
-    cabecalho_sub('Funções em Docker')
-    executar_comando(['docker', 'ps', '-a'])
-    print('\n')
-    cabecalho_sub('Listando Imagens Docker')
-    executar_comando(['docker', 'images'])
-    print('\n')
+from lib_autobot.lib_comandos import *
 
 # ------------------------------------------
 # ------------------------------------------
@@ -106,7 +72,7 @@ def verificar_helm_running():
 def consulta_kubectl():
     process1 = subprocess.Popen(['kubectl', 'config', 'get-contexts'], stdout=subprocess.PIPE)
     process2 = subprocess.Popen(['grep', '-v', 'NAME'], stdin=process1.stdout, stdout=subprocess.PIPE)
-    process3 = subprocess.Popen(['awk', '{print $1, $2}'], stdin=process2.stdout, stdout=subprocess.PIPE)
+    process3 = subprocess.Popen(['awk', '{print $1, aaaa, $2}'], stdin=process2.stdout, stdout=subprocess.PIPE)
     output, error = process3.communicate()
     print(output.decode('utf-8'))
 
@@ -124,11 +90,16 @@ def list_helm():
 
 def list_version():
     cabecalho_sub('Listar versões instaladas')
+    cabecalho_cor('Versão Docker')
     executar_comando(['docker', '--version'])
+    cabecalho_cor('Versão Python')
     executar_comando(['python3', '--version'])
+    cabecalho_cor('Versão AWS cli')
     executar_comando(['aws', '--version'])
+    cabecalho_cor('Versão Kubectl')
     executar_comando(['kubectl', 'version', '--client', '--output=yaml'])
     executar_comando(['kubectl', 'version', '--client'])
+    cabecalho_cor('Versão Helm')
     executar_comando(['helm', 'version'])
 
 
@@ -160,7 +131,7 @@ def menu():
             verificar_docker_running()
             #executar_comando(['docker', 'ps','|', 'grep', 'portainerer'])
         elif opcao == '4':
-            dev_docker()
+            verificar_docker_dados()
         elif opcao == '5':
             listar_credenciais()
             listar_perfis()
