@@ -98,7 +98,8 @@ def list_version():
     executar_comando(['aws', '--version'])
     cabecalho_cor('Versão Kubectl')
     executar_comando(['kubectl', 'version', '--client', '--output=yaml'])
-    executar_comando(['kubectl', 'version', '--client'])
+    cabecalho_cor('Versão K9s')
+    executar_comando(['k9s', 'version'])
     cabecalho_cor('Versão Helm')
     executar_comando(['helm', 'version'])
 
