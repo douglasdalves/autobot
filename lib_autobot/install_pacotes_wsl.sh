@@ -87,7 +87,7 @@ then
 fi
 
 # Define variáveis
-K9S_VERSION="v0.26.7"
+K9S_VERSION="v0.32.5"
 K9S_URL="https://github.com/derailed/k9s/releases/download/$K9S_VERSION/k9s_Linux_x86_64.tar.gz"
 TEMP_FILE="/tmp/k9s.tar.gz"
 TEMP_DIR="/tmp"
