@@ -9,6 +9,7 @@ from lib_autobot.docker_comandos import fun_start_docker
 from lib_autobot.docker_comandos import fun_stop_docker
 from lib_autobot.docker_comandos import verificar_docker_running
 from lib_autobot.docker_comandos import verificar_docker_dados
+from lib_autobot.kube_comandos import dev_kube
 
 from lib_autobot.lib_comandos import *
 
@@ -36,20 +37,6 @@ def listar_perfis():
 # ------------------------------------------
 # ------------------------------------------
 
-def verificar_kind_running():
-    try:
-        # Executa o comando 'kind get clusters'
-        result = subprocess.run(['kind', 'get', 'clusters'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        
-        # Verifica se a saída contém clusters
-        if result.stdout.strip():  # Se houver algo na saída, o kind está rodando
-            print(colored(f"King está rodando.", 'blue'))
-            executar_comando(['kind', 'get', 'clusters'])
-        else:
-            print(colored(f"King não está rodando.", 'red'))
-    except Exception as e:
-        print(f"Ocorreu um erro: {e}")
-
 
 def verificar_helm_running():
     try:
@@ -66,22 +53,6 @@ def verificar_helm_running():
         print(f"Ocorreu um erro: {e}")
 
 
-# Executa o comando kubectl config get-contexts
-# Passa o resultado para awk '{print $1, $2}'
-# Decodifica o resultado de bytes para string
-def consulta_kubectl():
-    process1 = subprocess.Popen(['kubectl', 'config', 'get-contexts'], stdout=subprocess.PIPE)
-    process2 = subprocess.Popen(['grep', '-v', 'NAME'], stdin=process1.stdout, stdout=subprocess.PIPE)
-    process3 = subprocess.Popen(['awk', '{print $1, aaaa, $2}'], stdin=process2.stdout, stdout=subprocess.PIPE)
-    output, error = process3.communicate()
-    print(output.decode('utf-8'))
-
-
-def dev_kube():
-    cabecalho_sub('Listando Kind Clusters')
-    verificar_kind_running()
-    cabecalho_sub('Dados de context do kubectx')
-    consulta_kubectl()
 
 def list_helm():
     cabecalho_sub('Listando Dados do Helm')
