@@ -61,14 +61,16 @@ def list_helm():
 
 def list_version():
     cabecalho_sub('Listar versões instaladas')
-    cabecalho_cor('Versão Docker')
-    executar_comando(['docker', '--version'])
     cabecalho_cor('Versão Python')
     executar_comando(['python3', '--version'])
     cabecalho_cor('Versão AWS cli')
     executar_comando(['aws', '--version'])
     cabecalho_cor('Versão Kubectl')
     executar_comando(['kubectl', 'version', '--client', '--output=yaml'])
+    cabecalho_cor('Versão Docker')
+    executar_comando(['kind', '--version'])
+    cabecalho_cor('Versão Docker')
+    executar_comando(['docker', '--version'])
     cabecalho_cor('Versão K9s')
     executar_comando(['k9s', 'version'])
     cabecalho_cor('Versão Helm')
