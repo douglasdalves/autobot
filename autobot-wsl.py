@@ -59,8 +59,13 @@ def list_helm():
     #executar_comando(['helm', 'list'])
     verificar_helm_running()
 
+def listar_versao(nome, comando):
+    cabecalho_cor(f"Versão {nome}")
+    executar_comando(comando)
+
 def list_version():
     cabecalho_sub('Listar versões instaladas')
+<<<<<<< HEAD
     cabecalho_cor('Versão Python')
     executar_comando(['python3', '--version'])
     cabecalho_cor('Versão AWS cli')
@@ -75,6 +80,21 @@ def list_version():
     executar_comando(['k9s', 'version'])
     cabecalho_cor('Versão Helm')
     executar_comando(['helm', 'version'])
+=======
+    
+    versoes = {
+        'Docker': ['docker', '--version'],
+        'Python': ['python3', '--version'],
+        'AWS cli': ['aws', '--version'],
+        'Kubectl': ['kubectl', 'version', '--client', '--output=yaml'],
+        'K9s': ['k9s', 'version'],
+        'Helm': ['helm', 'version'],
+        'ASRE cli': ['asre', 'version']
+    }
+    
+    for nome, comando in versoes.items():
+        listar_versao(nome, comando)
+>>>>>>> cd2e753 (new task consulta-helm)
 
 
 # ------------------------------------------
