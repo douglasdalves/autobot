@@ -65,22 +65,6 @@ def listar_versao(nome, comando):
 
 def list_version():
     cabecalho_sub('Listar versões instaladas')
-<<<<<<< HEAD
-    cabecalho_cor('Versão Python')
-    executar_comando(['python3', '--version'])
-    cabecalho_cor('Versão AWS cli')
-    executar_comando(['aws', '--version'])
-    cabecalho_cor('Versão Kubectl')
-    executar_comando(['kubectl', 'version', '--client', '--output=yaml'])
-    cabecalho_cor('Versão Docker')
-    executar_comando(['kind', '--version'])
-    cabecalho_cor('Versão Docker')
-    executar_comando(['docker', '--version'])
-    cabecalho_cor('Versão K9s')
-    executar_comando(['k9s', 'version'])
-    cabecalho_cor('Versão Helm')
-    executar_comando(['helm', 'version'])
-=======
     
     versoes = {
         'Docker': ['docker', '--version'],
@@ -94,7 +78,6 @@ def list_version():
     
     for nome, comando in versoes.items():
         listar_versao(nome, comando)
->>>>>>> cd2e753 (new task consulta-helm)
 
 
 # ------------------------------------------
