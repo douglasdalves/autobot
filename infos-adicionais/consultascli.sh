@@ -25,12 +25,19 @@ realizar_operacao() {
     echo
     echo "--- Realizando operação ---"
     echo
-    resultado=$(eval $comando)
+    resultado=$(eval $comando 2>&1)
     if [[ $? -ne 0 ]]; then
         echo "Erro ao executar '$comando'"
         exit 1
     fi
-    echo "$resultado"
+
+    if [[ "$resultado" == *"não localizado"* ]]; then
+        echo "Aviso: O serviço ou aplicação '$comando' não foi localizado."
+    elif [[ -z "$resultado" || "$resultado" == "null" ]]; then
+        echo "Aviso: O comando '$comando' não retornou dados."
+    else
+        echo "$resultado"
+    fi
     echo
 }
 
@@ -44,7 +51,7 @@ validar_entrada $valor
 
 # Comandos
 asre_service="asre catalogo servicos get $valor"
-asre_apps="asre catalogo aplicacoes get $sigla"
+asre_apps="asre catalogo aplicacoes list | grep $sigla"
 
 # Realiza as operações
 realizar_operacao "$asre_service"
