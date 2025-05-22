@@ -21,6 +21,8 @@ grep_portainer = "docker ps | grep portainer"
 portainer_stop = "docker stop portainer"
 log_portainer = "docker logs -n 3 portainer"
 
+start_ui_apache = "docker run -d -p 8080:8080 -e DYNAMIC_CONFIG_ENABLED=true -v kafka-ui-data:/etc/kafkaui provectuslabs/kafka-ui"
+
 # ------------------------------------------
 # ------------------------------------------
 
@@ -74,7 +76,13 @@ def run_command(command):
 # ------------------------------------------
 # ------------------------------------------
 
-# Função de menu START
+
+import os
+from time import sleep
+
+def run_command(command):
+    return os.popen(command).read()
+
 def fun_start_docker():
     print("\nAutomatizando o docker no WSL")
     
@@ -87,6 +95,17 @@ def fun_start_docker():
     print("\nStatus do Portainer:")
     sleep(20)
     print(run_command(grep_portainer))
+
+    # Verifica se o nome do WSL2 é "douglas@ACT9880"
+    usuario_host = run_command("whoami").strip() + "@" + run_command("hostname").strip()
+    
+    if usuario_host == "douglas@ACT9880":
+        print("\nStatus do Ui kafka:")
+        sleep(25)
+        print(run_command(start_ui_apache))
+    else:
+        print(f"\nIgnorando Ui kafka: ambiente atual é '{usuario_host}'")
+
 
 # Executar a função de menu
 if __name__ == "__main__":
