@@ -10,6 +10,7 @@ from lib_autobot.docker_comandos import fun_stop_docker
 from lib_autobot.docker_comandos import verificar_docker_running
 from lib_autobot.docker_comandos import verificar_docker_dados
 from lib_autobot.kube_comandos import dev_kube
+from lib_autobot.kube_comandos import list_helm
 
 from lib_autobot.lib_comandos import *
 
@@ -37,43 +38,31 @@ def listar_perfis():
 # ------------------------------------------
 # ------------------------------------------
 
-
-def verificar_helm_running():
-    try:
-        # Executa o comando 'kind get clusters'
-        result = subprocess.run(['helm', 'list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        
-        # Verifica se a saída contém clusters
-        if result.stdout.strip():  # Se houver algo na saída, o kind está rodando
-            print(colored(f"Helm Disponível.", 'blue'))
-            executar_comando(['helm', 'list'])
-        else:
-            print(colored(f"Helm não está Disponível.", 'red'))
-    except Exception as e:
-        print(f"Ocorreu um erro: {e}")
-
-
-
-def list_helm():
-    cabecalho_sub('Listando Dados do Helm')
-    #executar_comando(['helm', 'list'])
-    verificar_helm_running()
-
 def listar_versao(nome, comando):
     cabecalho_cor(f"Versão {nome}")
     executar_comando(comando)
+
+def verificar_ambiente_e_executar_versao():
+    usuario_host = comando_host()
+    
+    if usuario_host == "douglas@ACT9880":
+        acao_para_ambiente_correto()
+        listar_versao('ASRE cli', ['asre', 'version'])
+    else:
+        acao_para_ambiente_errado()
+
 
 def list_version():
     cabecalho_sub('Listar versões instaladas')
     
     versoes = {
+        'Git': ['git', '--version'],
         'Docker': ['docker', '--version'],
         'Python': ['python3', '--version'],
         'AWS cli': ['aws', '--version'],
         'Kubectl': ['kubectl', 'version', '--client', '--output=yaml'],
         'K9s': ['k9s', 'version'],
-        'Helm': ['helm', 'version'],
-        'ASRE cli': ['asre', 'version']
+        'Helm': ['helm', 'version']  
     }
     
     for nome, comando in versoes.items():
@@ -114,6 +103,7 @@ def menu():
             listar_perfis()
         elif opcao == '6':
             list_version()
+            verificar_ambiente_e_executar_versao()
         elif opcao == '7':
             dev_kube()
         elif opcao == '8':

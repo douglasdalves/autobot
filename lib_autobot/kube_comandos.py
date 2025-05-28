@@ -78,9 +78,42 @@ def count_resources():
     print(f"Secrets existentes no cluster: {secret_count}")
     print(f"ConfigMaps existentes no cluster: {configmap_count}")
 
+# ------------------------------------------
+#consultas no kind ou eks para o helm
+
+def verificar_helm_running():
+    try:
+        # Executa o comando 'kind get clusters'
+        result = subprocess.run(['helm', 'list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        # Verifica se a saída contém clusters
+        if result.stdout.strip():  # Se houver algo na saída, o kind está rodando
+            print(colored(f"Helm Disponível.", 'blue'))
+            executar_comando(['helm', 'list'])
+        else:
+            print(colored(f"Helm não está Disponível.", 'red'))
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+
+
+def list_helm():
+    cabecalho_sub('Listando Dados do Helm')
+    #executar_comando(['helm', 'list'])
+    verificar_helm_running()
+
 
 # ------------------------------------------
 #menu interno
+
+def verificar_ambiente_e_executar():
+    usuario_host = comando_host()
+    
+    if usuario_host == "douglas@ACT9880":
+        acao_para_ambiente_correto()
+        count_resources()
+    else:
+        acao_para_ambiente_errado()
+   
 
 def dev_kube():
     cabecalho_sub('Listando Kind Clusters')
@@ -88,5 +121,7 @@ def dev_kube():
     cabecalho_sub('Dados de context do kubectx')
     consulta_kubectl()
     cabecalho_sub('Dados do kubernetes')
-    count_resources()
-
+    # Chamada principal
+    verificar_ambiente_e_executar()
+    
+    

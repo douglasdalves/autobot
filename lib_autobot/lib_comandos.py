@@ -48,3 +48,23 @@ def comando_vscode():
         executar_comando(['code', '.'])
     else:
         print(f"O caminho {caminho} não existe.")
+
+
+# ------------------------------------------
+# libs - func
+# ------------------------------------------
+
+# Função para executar comandos no terminal
+def run_command(cmd):
+    return subprocess.check_output(cmd, shell=True, text=True).strip()
+
+def comando_host():
+    usuario = run_command("whoami")
+    host = run_command("hostname")
+    return f"{usuario}@{host}"
+
+def acao_para_ambiente_correto():
+    print(colored("Executando tarefa específica no ambiente correto!", "green"))
+
+def acao_para_ambiente_errado():
+    print(colored("Ignorando tarefa: ambiente não corresponde ao esperado.", "red"))

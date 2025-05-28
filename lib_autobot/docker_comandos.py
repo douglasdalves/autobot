@@ -80,6 +80,18 @@ def run_command(command):
 import os
 from time import sleep
 
+
+def verificar_ambiente_e_executar_uimsk():
+    usuario_host = comando_host()
+    
+    if usuario_host == "douglas@ACT9880":
+        acao_para_ambiente_correto()
+        sleep(25)
+        print(run_command(start_ui_apache))
+    else:
+        acao_para_ambiente_errado()
+
+
 def run_command(command):
     return os.popen(command).read()
 
@@ -95,17 +107,7 @@ def fun_start_docker():
     print("\nStatus do Portainer:")
     sleep(20)
     print(run_command(grep_portainer))
-
-    # Verifica se o nome do WSL2 é "douglas@ACT9880"
-    usuario_host = run_command("whoami").strip() + "@" + run_command("hostname").strip()
-    
-    if usuario_host == "douglas@ACT9880":
-        print("\nStatus do Ui kafka:")
-        sleep(25)
-        print(run_command(start_ui_apache))
-    else:
-        print(f"\nIgnorando Ui kafka: ambiente atual é '{usuario_host}'")
-
+    verificar_ambiente_e_executar_uimsk()
 
 # Executar a função de menu
 if __name__ == "__main__":
