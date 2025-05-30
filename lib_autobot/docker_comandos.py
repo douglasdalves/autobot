@@ -23,16 +23,18 @@ log_portainer = "docker logs -n 3 portainer"
 
 start_ui_apache = "docker run -d -p 8080:8080 -e DYNAMIC_CONFIG_ENABLED=true -v kafka-ui-data:/etc/kafkaui provectuslabs/kafka-ui"
 
+test_status = result = subprocess.run(['service', 'docker', 'status'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
 # ------------------------------------------
 # ------------------------------------------
 
 def verificar_docker_running():
     try:
         # Executa o comando 'service docker status'
-        result = subprocess.run(['service', 'docker', 'status'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        test_status
         
         # Verifica se a saída contém a palavra 'running'
-        if 'is running' in result.stdout:
+        if 'is running' or 'running' in result.stdout:
             print(colored(f"Docker está rodando.", 'blue'))
         else:
             print(colored(f"Docker não está rodando.", 'red'))
@@ -41,23 +43,19 @@ def verificar_docker_running():
 
 # ------------------------------------------
 
-def dev_docker():
-    cabecalho_sub('Funções em Docker')
-    executar_comando(['docker', 'ps', '-a'])
-    print('\n')
-    cabecalho_sub('Listando Imagens Docker')
-    executar_comando(['docker', 'images'])
-    print('\n')
-
-
 def verificar_docker_dados():
     try:
         # Executa o comando 'service docker status'
-        result = subprocess.run(['service', 'docker', 'status'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        test_status
         
         # Verifica se a saída contém a palavra 'running'
-        if 'is running' in result.stdout:
-            dev_docker()
+        if 'is running' or 'running' in result.stdout:
+            cabecalho_sub('Funções em Docker')
+            executar_comando(['docker', 'ps', '-a'])
+            print('\n')
+            cabecalho_sub('Listando Imagens Docker')
+            executar_comando(['docker', 'images'])
+            print('\n')
         else:
             print(colored(f"O Docker deve estar rodando para retornar o status.", 'red'))
     except Exception as e:

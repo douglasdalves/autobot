@@ -31,9 +31,21 @@ def listar_configuracoes():
     cabecalho_sub('Listando configurações AWS')
     executar_comando(['cat', os.path.expanduser("~/.aws/config")], shell=True)
 
+
 def listar_perfis():
-    cabecalho_sub('Listando perfis configurados')
-    executar_comando(['aws', 'configure', 'list-profiles'])
+    try:
+        listaraws = executar_comando(['aws', 'configure', 'list-profiles'])
+        
+        # Verifica se a saída contém a palavra 'running'
+        if 'Erro' or 'erro' in listaraws.stdout:
+            print(colored(f"Em desenvolvimento", 'blue'))
+            executar_comando(['aws', 'configure', 'list-profiles'])
+        else:
+            cabecalho_sub('Listando perfis configurados')
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+
+
 
 # ------------------------------------------
 # ------------------------------------------
