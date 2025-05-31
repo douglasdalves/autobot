@@ -1,69 +1,35 @@
 # ------------------------------------------
-# import
+# Imports
 # ------------------------------------------
 
 from lib_autobot.lib_comandos import *
 
 # ------------------------------------------
+# Variáveis Docker e Containers
 # ------------------------------------------
 
-# Variáveis docker
-status_docker = "service docker status"
-subindo_docker = "service docker start"
-stop_docker = "service docker stop"
+status_docker = "systemctl status docker"
+subindo_docker = "systemctl start docker"
+stop_docker = "systemctl stop docker"
 
-# Containers
 docker_ps = "docker ps -a"
 docker_log = "docker logs"
 
-# Variáveis portainer
+# Variáveis do Portainer
 grep_portainer = "docker ps | grep portainer"
 portainer_stop = "docker stop portainer"
 log_portainer = "docker logs -n 3 portainer"
 
-start_ui_apache = "docker run -d -p 8080:8080 -e DYNAMIC_CONFIG_ENABLED=true -v kafka-ui-data:/etc/kafkaui provectuslabs/kafka-ui"
-
-test_status = result = subprocess.run(['service', 'docker', 'status'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-# ------------------------------------------
-# ------------------------------------------
-
-def verificar_docker_running():
-    try:
-        # Executa o comando 'service docker status'
-        test_status
-        
-        # Verifica se a saída contém a palavra 'running'
-        if 'is running' or 'running' in result.stdout:
-            print(colored(f"Docker está rodando.", 'blue'))
-        else:
-            print(colored(f"Docker não está rodando.", 'red'))
-    except Exception as e:
-        print(f"Ocorreu um erro: {e}")
+# Kafka UI
+start_ui_apache = (
+    "docker run -d -p 8080:8080 -e DYNAMIC_CONFIG_ENABLED=true "
+    "-v kafka-ui-data:/etc/kafkaui provectuslabs/kafka-ui"
+)
 
 # ------------------------------------------
-
-def verificar_docker_dados():
-    try:
-        # Executa o comando 'service docker status'
-        test_status
-        
-        # Verifica se a saída contém a palavra 'running'
-        if 'is running' or 'running' in result.stdout:
-            cabecalho_sub('Funções em Docker')
-            executar_comando(['docker', 'ps', '-a'])
-            print('\n')
-            cabecalho_sub('Listando Imagens Docker')
-            executar_comando(['docker', 'images'])
-            print('\n')
-        else:
-            print(colored(f"O Docker deve estar rodando para retornar o status.", 'red'))
-    except Exception as e:
-        print(f"Ocorreu um erro: {e}")
-
+# Execução de comandos
 # ------------------------------------------
 
-# Função para executar comandos no terminal
 def run_command(command):
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
@@ -72,12 +38,40 @@ def run_command(command):
         return e.output
 
 # ------------------------------------------
+# Verificações e status do Docker
 # ------------------------------------------
 
+def docker_esta_ativo():
+    try:
+        result = subprocess.run(['systemctl', 'show', 'docker', '--property=ActiveState'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        return "ActiveState=active" in result.stdout.strip()
+    except Exception as e:
+        print(f"Erro ao verificar status do Docker: {e}")
+        return False
 
-import os
-from time import sleep
 
+def verificar_docker_running():
+    if docker_esta_ativo():
+        print(colored("Docker está rodando.", 'blue'))
+    else:
+        print(colored("Docker não está rodando.", 'red'))
+
+
+def verificar_docker_dados():
+    if docker_esta_ativo():
+        cabecalho_sub('Funções em Docker')
+        executar_comando(['docker', 'ps', '-a'])
+        print('\n')
+        cabecalho_sub('Listando Imagens Docker')
+        executar_comando(['docker', 'images'])
+        print('\n')
+    else:
+        print(colored("O Docker deve estar rodando para retornar o status.", 'red'))
+
+
+# ------------------------------------------
+# Execução do Kafka UI se ambiente correto
+# ------------------------------------------
 
 def verificar_ambiente_e_executar_uimsk():
     usuario_host = comando_host()
@@ -89,53 +83,41 @@ def verificar_ambiente_e_executar_uimsk():
     else:
         acao_para_ambiente_errado()
 
-
-def run_command(command):
-    return os.popen(command).read()
+# ------------------------------------------
+# Funções de start e stop do Docker
+# ------------------------------------------
 
 def fun_start_docker():
-    print("\nAutomatizando o docker no WSL")
-    
-    print("\nStatus atual:")
-    print(run_command(status_docker))
-    
-    print("\nStartando o serviço")
-    print(run_command(subindo_docker))
-    
-    print("\nStatus do Portainer:")
-    sleep(20)
-    print(run_command(grep_portainer))
-    verificar_ambiente_e_executar_uimsk()
+    print("\nValidando o Docker...")
 
-# Executar a função de menu
-if __name__ == "__main__":
-    fun_start_docker()
+    if docker_esta_ativo():
+        print(colored("Docker já está rodando.", 'blue'))
+    else:
+        print(colored("Docker não está rodando, será Iniciado\n", 'red'))
+        print(run_command(subindo_docker))
+
+        print("\nAguardando inicialização do Portainer...")
+        sleep(20)
+        print(run_command(grep_portainer))
+
+        verificar_ambiente_e_executar_uimsk()
+        verificar_docker_running()
 
 
-# ------------------------------------------
-# ------------------------------------------
-
-
-# Função de menu STOP
 def fun_stop_docker():
-    print("\nAutomatizando o docker no WSL")
-    
-    # Exibir o status atual do Docker
-    print("\nStatus atual:")
-    print(run_command(status_docker))
-    print(run_command(grep_portainer))
-    
-    # Parar o container do Portainer
-    print("\nParando o Portainer")
-    print(run_command(portainer_stop))
-    time.sleep(10)
-        
-    # Parar o serviço do Docker
-    print("\nParando o serviço Docker")
-    print(run_command(stop_docker))
-    time.sleep(10)
-    print(run_command(status_docker))    
+    print("\nValidando o Docker...")
 
-# Executar o menu
-if __name__ == "__main__":
-    fun_stop_docker()
+    if docker_esta_ativo():
+        print(colored("Docker já está rodando, será encerrado", 'blue'))
+    
+        print(run_command(portainer_stop))
+        sleep(10)
+        
+        print("\nParando o serviço Docker...")
+        print(run_command(stop_docker))
+        sleep(10)
+
+        print("\nStatus atual do Docker:")
+        verificar_docker_running()
+    else:
+        print(colored("Docker não está rodando\n", 'red'))
