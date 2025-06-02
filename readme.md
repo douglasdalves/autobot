@@ -12,4 +12,17 @@ systemd=true
 sudo systemctl disable docker.service
 sudo systemctl disable docker.socket
 systemctl is-enabled docker
-s
+
+
+#maquina sem user root
+sudo visudo
+your_username ALL=NOPASSWD: /bin/systemctl start docker, /bin/systemctl stop docker
+whoami
+nano ~/.bashrc
+alias startdocker='sudo /bin/systemctl start docker'
+alias stopdocker='sudo /bin/systemctl stop docker'
+
+
+docker ps --filter "name=kind"
+docker pause $(docker ps --filter "name=kind" -q)
+docker unpause $(docker ps -a --filter "name=kind" -q)

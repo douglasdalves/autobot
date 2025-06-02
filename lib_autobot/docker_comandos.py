@@ -83,6 +83,41 @@ def verificar_ambiente_e_executar_uimsk():
     else:
         acao_para_ambiente_errado()
 
+def verificar_ambiente_e_executar_docker():
+    usuario_host = comando_host()
+    
+    if usuario_host == "douglas@ACT9880":
+        acao_para_ambiente_correto()
+        print(colored("Docker não está rodando, será Iniciado\n", 'red'))
+        run_command('startdocker')
+    else:
+        acao_para_ambiente_errado()
+        print(colored("Docker não está rodando, será Iniciado\n", 'red'))
+        print(run_command(subindo_docker))
+
+def verificar_ambiente_e_executar_docker_stop():
+    usuario_host = comando_host()
+    
+    if usuario_host == "douglas@ACT9880":
+        acao_para_ambiente_correto()
+        print("\nParando o serviço Docker...")
+        sleep(5)
+        run_command('docker stop infallible_ramanujan')
+        sleep(5)
+        run_command('stopdocker')
+        sleep(5)
+
+        print("\nStatus atual do Docker:")
+        verificar_docker_running()
+    else:
+        acao_para_ambiente_errado()
+        print("\nParando o serviço Docker...")
+        print(run_command(stop_docker))
+        sleep(10)
+
+        print("\nStatus atual do Docker:")
+        verificar_docker_running()
+
 # ------------------------------------------
 # Funções de start e stop do Docker
 # ------------------------------------------
@@ -93,9 +128,7 @@ def fun_start_docker():
     if docker_esta_ativo():
         print(colored("Docker já está rodando.", 'blue'))
     else:
-        print(colored("Docker não está rodando, será Iniciado\n", 'red'))
-        print(run_command(subindo_docker))
-
+        verificar_ambiente_e_executar_docker()
         print("\nAguardando inicialização do Portainer...")
         sleep(20)
         print(run_command(grep_portainer))
@@ -113,11 +146,6 @@ def fun_stop_docker():
         print(run_command(portainer_stop))
         sleep(10)
         
-        print("\nParando o serviço Docker...")
-        print(run_command(stop_docker))
-        sleep(10)
-
-        print("\nStatus atual do Docker:")
-        verificar_docker_running()
+        verificar_ambiente_e_executar_docker_stop()
     else:
         print(colored("Docker não está rodando\n", 'red'))
