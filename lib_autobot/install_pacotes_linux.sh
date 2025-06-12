@@ -1,11 +1,16 @@
 #!/bin/bash
 
 # ------------------------------------------
-# Instalação de Requisitos Python
+# Instalação de Requisitos para LINUX
 # ------------------------------------------
+
+# APT-GET - PIP - Python - Arquivo requisitos
 
 # Para o script em caso de erro
 set -e
+
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 # Atualizando os pacotes do sistema
 echo "Atualizando pacotes do sistema..."

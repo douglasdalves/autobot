@@ -19,25 +19,18 @@ timeout $timeout_seconds curl -vvv telnet://$host
 
 # Verificar o status do comando
 if [ $? -eq 124 ]; then
-    echo 
-    echo "Conexão encerrada automaticamente após $timeout_seconds segundos."
-    echo
+    echo -e "\nConexão encerrada automaticamente após $timeout_seconds segundos.\n"
 else
-    echo 
-    echo "Falha na resolução do curl/telnet."
-    echo
+    echo -e "\nFalha na resolução do curl/telnet.\n"
 fi
 
 # Testar resolução de DNS usando nslookup
-echo
-echo "Verificando a resolução DNS para o host $host_name..."
+echo -e "\nVerificando a resolução DNS para o host $host_name..."
 nslookup $host_name
 
 # Verificar o status do comando nslookup
 if [ $? -eq 0 ]; then
-    echo "Resolução DNS bem-sucedida."
-    echo
+    echo -e "\nResolução DNS bem-sucedida.\n"
 else
-    echo "Falha na resolução DNS para o host $host_name."
-    echo
+    echo -e "\nFalha na resolução DNS para o host $host_name.\n"
 fi

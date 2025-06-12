@@ -22,9 +22,7 @@ validar_entrada() {
 # Função para realizar a operação
 realizar_operacao() {
     local comando=$1
-    echo
-    echo "--- Realizando operação ---"
-    echo
+    echo -e "\n--- Realizando operação ---\n"
     resultado=$(eval $comando 2>&1)
     if [[ $? -ne 0 ]]; then
         echo "Erro ao executar '$comando'"
@@ -42,9 +40,8 @@ realizar_operacao() {
 }
 
 # Solicita o valor de entrada
-echo "Insira a Sigla-NomeDoRepo:"
 echo
-read valor
+read -p "Insira a Sigla-NomeDoRepo: " valor
 
 # Valida a entrada
 validar_entrada $valor

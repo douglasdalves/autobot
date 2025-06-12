@@ -6,8 +6,6 @@
 
 # CLI - KUBECTL - K9S #
 
-
-
 # Para o script em caso de erro
 set -e
 

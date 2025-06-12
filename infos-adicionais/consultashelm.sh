@@ -13,20 +13,18 @@ if [ -z "$repo_name" ]; then
 fi
 
 # Executa os comandos com o nome do repositório inserido
-echo "-- Infos no EKS --"
-echo
+echo -e "\n-- Infos no EKS --\n"
 kubectl get all -A | grep "$repo_name"
-echo
+
 # Exibe o campo image de todos os pods que correspondem ao repo_name
-echo "-- List ID Image --"
-echo
+echo -e "\n-- List ID Image --\n"
 kubectl get pods -A -o jsonpath="{range .items[*]}{.metadata.name}{'\t'}{.spec.containers[*].image}{'\n'}{end}" | grep "$repo_name"
-echo
+
 # Lista a versao aplicada via release helm
-echo "-- Releases List --"
-echo
+echo -e "\n-- Releases List --\n"
 helm list -A | grep "$repo_name"
-echo
+
+echo -e "\n-- Releases Removida com histórico --\n"
 # Procura alguma release removida com o registro
 helm list --uninstalled -A | grep "$repo_name"
 echo
