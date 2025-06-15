@@ -9,8 +9,8 @@ from lib_autobot.lib_comandos import *
 # ------------------------------------------
 
 status_docker = "systemctl status docker"
-subindo_docker = "systemctl start docker"
-stop_docker = "systemctl stop docker"
+subindo_docker = "sudo /bin/systemctl start docker"
+stop_docker = "sudo /bin/systemctl stop docker"
 
 docker_ps = "docker ps -a"
 docker_log = "docker logs"
@@ -79,7 +79,7 @@ def verificar_ambiente_e_executar_uimsk():
     if usuario_host == "douglas@ACT9880":
         acao_para_ambiente_correto()
         sleep(25)
-        print(run_command(start_ui_apache))
+        run_command(start_ui_apache)
     else:
         acao_para_ambiente_errado()
 
@@ -89,11 +89,11 @@ def verificar_ambiente_e_executar_docker():
     if usuario_host == "douglas@ACT9880":
         acao_para_ambiente_correto()
         print(colored("Docker não está rodando, será Iniciado\n", 'red'))
-        run_command('startdocker')
+        run_command(subindo_docker)
     else:
         acao_para_ambiente_errado()
         print(colored("Docker não está rodando, será Iniciado\n", 'red'))
-        print(run_command(subindo_docker))
+        run_command(subindo_docker)
 
 def verificar_ambiente_e_executar_docker_stop():
     usuario_host = comando_host()
@@ -104,7 +104,7 @@ def verificar_ambiente_e_executar_docker_stop():
         sleep(5)
         run_command('docker stop infallible_ramanujan')
         sleep(5)
-        run_command('stopdocker')
+        run_command(stop_docker)
         sleep(5)
 
         print("\nStatus atual do Docker:")
@@ -112,7 +112,7 @@ def verificar_ambiente_e_executar_docker_stop():
     else:
         acao_para_ambiente_errado()
         print("\nParando o serviço Docker...")
-        print(run_command(stop_docker))
+        run_command(stop_docker)
         sleep(10)
 
         print("\nStatus atual do Docker:")
