@@ -106,9 +106,13 @@ def list_helm():
 #menu interno
 
 def verificar_ambiente_e_executar():
-    usuario_host = comando_host()
+    #usuario_host = comando_host()
+    #if usuario_host == "douglas@ACT9880":
     
-    if usuario_host == "douglas@ACT9880":
+    ambiente_esperado = "douglas@ACT9880"
+    ambiente_atual = run_command("hostname")
+    
+    if ambiente_atual == ambiente_esperado:
         acao_para_ambiente_correto()
         count_resources()
     else:

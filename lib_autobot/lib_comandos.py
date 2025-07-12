@@ -64,7 +64,7 @@ def comando_host():
     return f"{usuario}@{host}"
 
 def acao_para_ambiente_correto():
-    print(colored("Executando tarefa específica no ambiente correto!", "green"))
+    print(colored("Executando tarefa: Ação específica no ambiente esperado!", "green"))
 
 def acao_para_ambiente_errado():
-    print(colored("Ignorando tarefa: ambiente não corresponde ao esperado.", "red"))
+    print(colored("Ignorando tarefa: Ambiente não corresponde ao esperado.", "red"))
