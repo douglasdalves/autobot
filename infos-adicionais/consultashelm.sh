@@ -3,12 +3,12 @@
 set -e
 
 # Solicita o nome do repositório
-read -p "Digite repositorio: " repo_name
+read -p "✅ Digite repositorio: " repo_name
 echo
 
 # Verifica se o nome do repositório está vazio
 if [ -z "$repo_name" ]; then
-  echo "Erro: O nome do repositório não pode ficar em branco."
+  echo "❌ Erro: O nome do repositório não pode ficar em branco."
   exit 1
 fi
 

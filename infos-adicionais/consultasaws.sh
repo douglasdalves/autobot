@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "\n Consultas na AWS"
+echo -e "\n ✅ Consultas na AWS"
 echo -e "Escolha uma região da lista abaixo:\n"
 
 # Lista de regiões disponíveis
@@ -34,13 +34,13 @@ aws mq list-brokers --region "$REGION" --output json | jq -r '.BrokerSummaries[]
 
 # -------------------------------------------------------------#
 echo
-read -p "Informe a sigla para filtrar os secrets: " SIGLA
+read -p "✅ Informe a sigla para filtrar os secrets: " SIGLA
 
 # Verificando se a sigla foi informada
 echo -e "\n🔍 Buscando secrets que contenham '$SIGLA' na região $REGION..."
 
 if [ -z "$SIGLA" ]; then
-    echo "Nenhuma sigla informada. Listando todos os secrets."
+    echo "⚠️ Nenhuma sigla informada. Listando todos os secrets."
     SIGLA=".*"  # Regex que corresponde a qualquer string
 fi
 # Listando secrets no Secrets Manager filtrados pela sigla
@@ -50,17 +50,17 @@ jq -r --arg sigla "$SIGLA" '.SecretList[]? | select(.Name | test($sigla; "i")) |
 # -------------------------------------------------------------#
 
 echo
-read -p "Informe o namespace para consultar as ServiceAccounts: " NAMESPACE
+read -p "✅ Informe o namespace para consultar as ServiceAccounts: " NAMESPACE
 
 echo -e "\n🔍 Listando ServiceAccounts no namespace '$NAMESPACE'..."
 if [ -z "$NAMESPACE" ]; then
-    echo "Nenhum namespace informado. Usando o namespace padrão 'default'."
+    echo "⚠️ Nenhum namespace informado. Usando o namespace padrão 'default'."
     NAMESPACE="default"
 fi
 
 # Listando ServiceAccounts no namespace informado
 if [ $? -ne 0 ]; then
-    echo "Erro ao listar ServiceAccounts. Verifique se o namespace '$NAMESPACE' existe."
+    echo "❌ Erro ao listar ServiceAccounts. Verifique se o namespace '$NAMESPACE' existe."
 else
     echo -e "\n🔍 Verificando ServiceAccounts com secrets no namespace '$NAMESPACE'..."
     kubectl get serviceaccounts -n "$NAMESPACE"
