@@ -12,37 +12,52 @@ set -e
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 
+#!/bin/bash
+
+# Função para verificar se a versão instalada é a v2
+is_aws_cli_v2() {
+    aws --version 2>/dev/null | grep -q 'aws-cli/2'
+}
+
 # Verifica se o AWS CLI está instalado
 if command -v aws &> /dev/null; then
     echo
-    echo "Versão do AWS CLI:"
-    echo
+    echo "Versão atual do AWS CLI:"
     aws --version
+    echo
+
+    if is_aws_cli_v2; then
+        echo "✅ AWS CLI já está na versão 2. Nenhuma ação necessária."
+    else
+        echo "⚠️ AWS CLI está instalado, mas não é a versão 2. Atualizando..."
+        
+        # Instalação da versão 2
+        sudo apt update
+        sudo apt install unzip -y
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip -o awscliv2.zip
+        sudo ./aws/install --update
+        rm -rf awscliv2.zip aws
+
+        echo
+        echo "✅ AWS CLI atualizado com sucesso para:"
+        aws --version
+    fi
 else
-    echo "AWS CLI não está instalado. Instalando agora..."
+    echo "❌ AWS CLI não está instalado. Instalando agora..."
 
-    # Instalação do AWS CLI
-    echo "Instalando unzip..."
+    sudo apt update
     sudo apt install unzip -y
-
-    echo "Baixando o AWS CLI..."
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-
-    echo "Descompactando o instalador..."
     unzip awscliv2.zip
-
-    echo "Instalando o AWS CLI..."
     sudo ./aws/install
-
-    echo "Removendo arquivos temporários..."
     rm -rf awscliv2.zip aws
 
-    echo "AWS CLI instalado com sucesso."
     echo
-    echo "Versão do AWS CLI:"
-    echo
+    echo "✅ AWS CLI instalado com sucesso:"
     aws --version
 fi
+
 
 # ----------------------------------------------------------------------
 
