@@ -26,55 +26,40 @@ else
 fi
 
 
+function conectacao_sso {
+    echo "📌 Gostaria de conectar ao SSO agora? (s/n)"
+    read -r CONNECT
+    if [[ "$CONNECT" =~ ^[sS]$ ]]; then
+        echo "🔗 Conectando ao SSO..."
+        aws sso login --profile "$PROFILE"
+        if [ $? -eq 0 ]; then
+            echo "✅ Conexão SSO bem-sucedida."
+            # Executa o comando para verificar a identidade do usuário com o perfil SSO
+            echo "🔍 Executando 'aws sts get-caller-identity' com o perfil '$PROFILE'..."
+            aws sts get-caller-identity --profile "$PROFILE"
+            if [ $? -ne 0 ]; then
+                echo "❌ Falha ao executar 'aws sts get-caller-identity'. Verifique se o perfil SSO está configurado corretamente."
+                exit 1
+            fi
+        else
+            echo "❌ Falha ao conectar ao SSO. Verifique suas credenciais e tente novamente."
+            exit 1 
+        fi
+    else
+        echo "❌ Conexão SSO não realizada. Encerrando o script."
+        exit 1
+    fi
+}
+
+
+
 # Verifica se o diretório de cache SSO existe e se contém uma sessão ativa
 echo "🔍 Verificando sessão SSO ativa em $CACHE_DIR..."
 
 if [ -d "$CACHE_DIR" ] && grep -q '"startUrl"' "$CACHE_DIR"/*.json 2>/dev/null; then
     echo "✅ Sessão SSO ativa encontrada."
-    echo "📌 Gostaria de conectar ao SSO agora? (s/n)"
-    read -r CONNECT
-    if [[ "$CONNECT" =~ ^[sS]$ ]]; then
-        echo "🔗 Conectando ao SSO..."
-        aws sso login --profile "$PROFILE"
-        if [ $? -eq 0 ]; then
-            echo "✅ Conexão SSO bem-sucedida."
-            # Executa o comando para verificar a identidade do usuário com o perfil SSO
-            echo "🔍 Executando 'aws sts get-caller-identity' com o perfil '$PROFILE'..."
-            aws sts get-caller-identity --profile "$PROFILE"
-            if [ $? -ne 0 ]; then
-                echo "❌ Falha ao executar 'aws sts get-caller-identity'. Verifique se o perfil SSO está configurado corretamente."
-                exit 1
-            fi
-        else
-            echo "❌ Falha ao conectar ao SSO. Verifique suas credenciais e tente novamente."
-            exit 1 
-        fi
-    else
-        echo "❌ Conexão SSO não realizada. Encerrando o script."
-        exit 1
-    fi
+    conectacao_sso    
 else
     echo "⚠️ Nenhuma sessão SSO ativa encontrada."
-    echo "📌 Gostaria de conectar ao SSO agora? (s/n)"
-    read -r CONNECT
-    if [[ "$CONNECT" =~ ^[sS]$ ]]; then
-        echo "🔗 Conectando ao SSO..."
-        aws sso login --profile "$PROFILE"
-        if [ $? -eq 0 ]; then
-            echo "✅ Conexão SSO bem-sucedida."
-            # Executa o comando para verificar a identidade do usuário com o perfil SSO
-            echo "🔍 Executando 'aws sts get-caller-identity' com o perfil '$PROFILE'..."
-            aws sts get-caller-identity --profile "$PROFILE"
-            if [ $? -ne 0 ]; then
-                echo "❌ Falha ao executar 'aws sts get-caller-identity'. Verifique se o perfil SSO está configurado corretamente."
-                exit 1
-            fi
-        else
-            echo "❌ Falha ao conectar ao SSO. Verifique suas credenciais e tente novamente."
-            exit 1 
-        fi
-    else
-        echo "❌ Conexão SSO não realizada. Encerrando o script."
-        exit 1
-    fi
+    conectacao_sso
 fi
