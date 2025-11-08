@@ -19,15 +19,18 @@ validar_entrada() {
     fi
 }
 
-# Função para realizar a operação
 realizar_operacao() {
     local comando="$1"
-    echo -e "\n ✅ Realizando operação\n"
-    # Verifica se a saída contém a mensagem esperada
+    echo -e "\n ✅ Realizando operação: $comando\n"
+    
+    resultado=$(eval "$comando" 2>&1)  # Captura também erros
+
     if echo "$resultado" | grep -qi "não localizado"; then
         echo "⚠️ Aviso: O serviço ou aplicação não foi localizado."
     elif [[ -z "$resultado" || "$resultado" == "null" ]]; then
         echo "⚠️ Aviso: O comando '$comando' não retornou dados."
+    elif echo "$resultado" | grep -qi "erro\|não encontrado\|invalid"; then
+        echo "❌ Erro detectado: $resultado"
     else
         echo "$resultado"
     fi
