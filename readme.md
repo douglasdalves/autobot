@@ -40,3 +40,6 @@ export PATH=/usr/local/bin:$PATH
 source ~/.profile
 aws --version
 ```
+
+# brew
+sudo -u usobrew brew install nginx

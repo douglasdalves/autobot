@@ -12,8 +12,6 @@ set -e
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 
-#!/bin/bash
-
 # Função para verificar se a versão instalada é a v2
 is_aws_cli_v2() {
     aws --version 2>/dev/null | grep -q 'aws-cli/2'
@@ -61,93 +59,105 @@ fi
 
 # ----------------------------------------------------------------------
 
-# Verifica se o kubectl está instalado
-if ! command -v kubectl &> /dev/null
-then
-    echo "kubectl não está instalado. Instalando agora..."
+# KUBECTL
 
-    # Baixa a versão mais recente do kubectl
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+# Obtém a versão estável mais recente disponível
+LATEST_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
 
-    # Concede permissão de execução
+# Função para instalar ou atualizar kubectl
+install_kubectl() {
+    echo "📥 Baixando kubectl versão $LATEST_VERSION ..."
+    curl -LO "https://dl.k8s.io/release/${LATEST_VERSION}/bin/linux/amd64/kubectl"
+
     chmod +x kubectl
-
-    # Move o kubectl para o diretório /usr/local/bin para que ele seja acessível globalmente
     sudo mv kubectl /usr/local/bin/
 
-    # Confirma a instalação
-    if command -v kubectl &> /dev/null
-    then
-        echo "kubectl foi instalado com sucesso!"
-    else
-        echo "Houve um erro ao instalar o kubectl."
-    fi
+    echo "✅ kubectl versão $LATEST_VERSION instalado/atualizado!"
+}
+
+# Verifica se o kubectl está instalado
+if ! command -v kubectl &> /dev/null; then
+    echo "kubectl não está instalado. Instalando agora..."
+    install_kubectl
 else
-    echo
-    echo "kubectl já está instalado."
-    echo
-    kubectl version --client --output=yaml
+    echo "✅ kubectl já está instalado."
+    INSTALLED_VERSION=$(kubectl version --client -o yaml | grep gitVersion: | awk '{print $2}')
+
+    echo "Versão instalada: $INSTALLED_VERSION"
+    echo "Versão mais recente: $LATEST_VERSION"
+
+    if [ "$INSTALLED_VERSION" != "$LATEST_VERSION" ]; then
+        echo "🔄 Atualizando kubectl para a versão mais recente..."
+        install_kubectl
+    else
+        echo "👍 kubectl já está na versão mais recente."
+    fi
 fi
+
+
 
 # ----------------------------------------------------------------------
 
+# K9S
 
-# Verifica se o k9s já está instalado
-if command -v k9s &> /dev/null
-then
-    echo "O k9s já está instalado na máquina."
-    exit 0
-fi
-
-# Define variáveis
-K9S_VERSION="v0.32.5"
-K9S_URL="https://github.com/derailed/k9s/releases/download/$K9S_VERSION/k9s_Linux_x86_64.tar.gz"
+# Diretórios temporários
 TEMP_FILE="/tmp/k9s.tar.gz"
 TEMP_DIR="/tmp"
 
-# Faz o download do k9s
-echo "Baixando o k9s versão $K9S_VERSION..."
-wget "$K9S_URL" -O "$TEMP_FILE"
-if [ $? -ne 0 ]; then
-    echo "Falha ao baixar o k9s. Verifique sua conexão e o link."
-    exit 1
-fi
+# Detecta arquitetura
+ARCH=$(uname -m)
+case $ARCH in
+    x86_64)   K9S_ARCH="amd64" ;;
+    aarch64)  K9S_ARCH="arm64" ;;
+    *)        echo "❌ Arquitetura $ARCH não suportada."; exit 1 ;;
+esac
 
-# Extrai o arquivo
-echo "Extraindo o arquivo..."
-tar -zxvf "$TEMP_FILE" --directory "$TEMP_DIR"
-if [ $? -ne 0 ]; then
-    echo "Falha ao extrair o arquivo."
-    exit 1
-fi
+# Obtém a versão mais recente do GitHub
+LATEST_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | grep tag_name | cut -d '"' -f 4)
 
-# Define permissões e move o binário
-echo "Instalando o k9s..."
-chmod +x "$TEMP_DIR/k9s"
-sudo mv "$TEMP_DIR/k9s" /usr/local/bin/k9s
-if [ $? -ne 0 ]; then
-    echo "Falha ao mover o k9s para /usr/local/bin. Verifique permissões."
-    exit 1
-fi
+install_k9s() {
+    echo "📥 Baixando k9s versão $LATEST_VERSION para $K9S_ARCH ..."
+    K9S_URL="https://github.com/derailed/k9s/releases/download/${LATEST_VERSION}/k9s_Linux_${K9S_ARCH}.tar.gz"
+    wget -q "$K9S_URL" -O "$TEMP_FILE" || { echo "❌ Falha no download ($K9S_URL)"; exit 1; }
 
-# Limpa o arquivo temporário
-rm -f "$TEMP_FILE"
+    echo "📦 Extraindo..."
+    tar -zxf "$TEMP_FILE" --directory "$TEMP_DIR" || { echo "❌ Falha ao extrair"; exit 1; }
 
-# Verifica a instalação
-if command -v k9s &> /dev/null
-then
-    echo "k9s instalado com sucesso!"
-    k9s version
+    echo "⚙️ Instalando..."
+    chmod +x "$TEMP_DIR/k9s"
+    sudo mv "$TEMP_DIR/k9s" /usr/local/bin/k9s
+    rm -f "$TEMP_FILE"
+
+    echo "✅ k9s versão $LATEST_VERSION instalado/atualizado!"
+    k9s version | grep "Version:"
+}
+
+if command -v k9s &> /dev/null; then
+    echo "🔍 k9s já está instalado."
+    INSTALLED_VERSION=$(k9s version | grep "Version:" | awk '{print $2}')
+
+    echo "Versão instalada: $INSTALLED_VERSION"
+    echo "Versão mais recente: $LATEST_VERSION"
+
+    if [ "$INSTALLED_VERSION" != "$LATEST_VERSION" ]; then
+        echo "🔄 Atualizando k9s..."
+        install_k9s
+    else
+        echo "👍 k9s já está na versão mais recente."
+    fi
 else
-    echo "Falha na instalação do k9s."
-    exit 1
+    echo "⚠️ k9s não está instalado. Instalando agora..."
+    install_k9s
 fi
+
+
+
 
 
 # ----------------------------------------------------------------------
 
 echo
-echo "Instalação e listagem completa!"
+echo "✅ Instalação e listagem completa!"
 echo
 
 
