@@ -159,6 +159,39 @@ check_k9s() {
     fi
 }
 
+# ----------------------------------------------------------------------
+
+
+check_k9s_gitbash() {
+    echo "🔍 Detectando ambiente Git Bash no Windows..."
+
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64)   K9S_ARCH="amd64" ;;
+        aarch64)  K9S_ARCH="arm64" ;;
+        *)        echo "❌ Arquitetura $ARCH não suportada."; exit 1 ;;
+    esac
+
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | grep tag_name | cut -d '"' -f 4)
+
+    INSTALL_DIR="/c/Users/douglas.alves/k9s"
+    mkdir -p "$INSTALL_DIR"
+
+    K9S_URL="https://github.com/derailed/k9s/releases/download/${LATEST_VERSION}/k9s_Windows_${K9S_ARCH}.zip"
+    TEMP_FILE="/tmp/k9s.zip"
+
+    echo "📥 Baixando k9s versão $LATEST_VERSION para Windows..."
+    curl -L "$K9S_URL" -o "$TEMP_FILE" || { echo "❌ Falha no download"; exit 1; }
+
+    echo "📦 Extraindo..."
+    unzip -o "$TEMP_FILE" -d "$INSTALL_DIR" || { echo "❌ Falha ao extrair"; exit 1; }
+
+    echo "✅ k9s instalado em $INSTALL_DIR"
+    echo "➡️ Adicione $INSTALL_DIR ao PATH para usar o comando 'k9s'"
+}
+
+#echo 'export PATH=$PATH:/c/Users/'"$USERNAME"'/k9s' >> ~/.bashrc
+
 
 # ----------------------------------------------------------------------
 
@@ -173,6 +206,7 @@ list_parts() {
     echo "Exemplo: $0 aws_cli,kubectl,k9s"
     echo
 }
+
 
 # ----------------------------------------------------------------------
 # Função principal para processar as opções
@@ -204,6 +238,10 @@ start_opcao() {
             k9s)
                 echo "🔍 Verificando k9s..."
                 check_k9s
+                ;;
+            k9s_gitbash)
+                echo "🔍 Verificando k9s..."
+                check_k9s_gitbash
                 ;;
             all)
                 echo "🔍 Verificando todos os pacotes..."
