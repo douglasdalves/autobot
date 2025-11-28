@@ -27,12 +27,12 @@ from lib_autobot.lib_comandos import *
 def menu():
     while True:
         cabecalho_menu("\nEscolha uma opção:\n")
-        print("1 - Iniciar docker")
-        print("2 - Parar docker")
+        print("1 - Start Docker")
+        print("2 - Stop Docker")
         print("3 - Status Docker")
         print("4 - Dados Docker")        
         print("5 - Dados AWS CLI")
-        print("6 - Listar Versões")
+        print("6 - List Version")
         print("7 - Dados EKS")
         print("8 - Dados Helm")
         print("9 - VS code")

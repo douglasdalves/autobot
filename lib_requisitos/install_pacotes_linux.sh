@@ -173,6 +173,13 @@ start_opcao() {
                 echo "📦 Instalando Gemini CLI..."
                 check_gemini_cli
                 ;;
+            all)
+                echo "🔄 Executando todas as partes..."
+                check_upgrade
+                check_python3
+                check_nodejs_brew
+                check_gemini_cli
+                ;;
             *)
                 echo "❌ Parte desconhecida: $part"
                 ;;
