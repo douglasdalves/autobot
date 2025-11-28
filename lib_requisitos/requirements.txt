@@ -1,8 +1,8 @@
 
-pyautogui 
-pillow 
-termcolor 
-requests 
-tqdm 
-boto3 
+pyautogui
+pillow
+termcolor
+requests
+tqdm
+boto3
 urllib3
