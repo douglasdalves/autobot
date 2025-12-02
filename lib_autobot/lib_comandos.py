@@ -8,6 +8,7 @@ from termcolor import colored
 from time import sleep
 import time
 
+
 # ------------------------------------------
 # Format colored
 # ------------------------------------------
@@ -37,17 +38,27 @@ def executar_comando(comando, shell=False):
 
 
 def comando_vscode():
-    caminho = "/root/devops/automation-py/autobot"
-            
-            # Verifica se o caminho existe
-    if os.path.exists(caminho):
-                # Altera o diretório para o caminho especificado
-        os.chdir(caminho)
-                
-                # Abre o VS Code no diretório atual
-        executar_comando(['code', '.'])
-    else:
-        print(f"O caminho {caminho} não existe.")
+    caminhos = [
+        "C:/usebash/devops/autobot",
+        "/root/devops/automation-py/autobot"
+    ]
+
+    caminho_existente = next((c for c in caminhos if os.path.exists(c)), None)
+
+    if not caminho_existente:
+        print("Nenhum dos caminhos configurados existe.")
+        return
+
+    try:
+        os.chdir(caminho_existente)
+
+        # USA O code.cmd em Windows/Git Bash
+        executar_comando(["code.cmd", "."])
+
+        print(f"VSCode aberto no diretório: {caminho_existente}")
+    except Exception as e:
+        print(f"Erro ao abrir VSCode no caminho {caminho_existente}: {e}")
+
 
 
 # ------------------------------------------
