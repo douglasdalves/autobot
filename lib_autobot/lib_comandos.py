@@ -37,28 +37,51 @@ def executar_comando(comando, shell=False):
         print(colored(f"Ocorreu um erro inesperado: {e}", 'red'))
 
 
+def ambiente_atual():
+    # Windows (cmd, PowerShell ou Git Bash)
+    if os.name == "nt":
+        return "windows"
+
+    # WSL (qualquer distro dentro do Windows)
+    try:
+        with open("/proc/version", "r") as f:
+            if "microsoft" in f.read().lower():
+                return "wsl"
+    except:
+        pass
+
+    # Linux puro
+    return "linux"
+
 def comando_vscode():
-    caminhos = [
-        "C:/usebash/devops/autobot",
-        "/root/devops/automation-py/autobot"
-    ]
+    ambientes = ambiente_atual()
 
-    caminho_existente = next((c for c in caminhos if os.path.exists(c)), None)
+    # Caminhos usados por você:
+    caminho_windows = "C:/usebash/devops/autobot"
+    caminho_linux   = "/root/devops/automation-py/autobot"
 
-    if not caminho_existente:
-        print("Nenhum dos caminhos configurados existe.")
+    if ambientes == "windows":
+        caminho = caminho_windows
+        comando = ["code.cmd", "."]
+
+    elif ambientes == "wsl":
+        caminho = caminho_linux
+        comando = ["code", "."]
+
+    else:  # Linux puro
+        caminho = caminho_linux
+        comando = ["code", "."]
+
+    if not os.path.exists(caminho):
+        print(f"O caminho não existe no ambiente {ambientes}: {caminho}")
         return
 
     try:
-        os.chdir(caminho_existente)
-
-        # USA O code.cmd em Windows/Git Bash
-        executar_comando(["code.cmd", "."])
-
-        print(f"VSCode aberto no diretório: {caminho_existente}")
+        os.chdir(caminho)
+        executar_comando(comando)
+        print(f"VSCode aberto ({ambientes}) no diretório: {caminho}")
     except Exception as e:
-        print(f"Erro ao abrir VSCode no caminho {caminho_existente}: {e}")
-
+        print(f"Erro ao abrir VSCode: {e}")
 
 
 # ------------------------------------------
