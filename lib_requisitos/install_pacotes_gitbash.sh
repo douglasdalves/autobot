@@ -84,14 +84,69 @@ check_k9s_gitbash() {
 
 # ----------------------------------------------------------------------
 
+check_aws_gitbash() {
+    echo "🔍 Verificando AWS CLI no Git Bash..."
+
+    if command -v aws >/dev/null 2>&1; then
+        INSTALLED_VERSION=$(aws --version 2>&1 | awk '{print $1}' | cut -d/ -f2)
+        echo "Versão instalada do AWS CLI: $INSTALLED_VERSION"
+    else
+        echo "AWS CLI não está instalado."
+        INSTALLED_VERSION=""
+    fi
+
+    # Consultar última versão disponível no GitHub
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/aws/aws-cli/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')
+
+    echo "Última versão disponível: $LATEST_VERSION"
+
+    if [ "$INSTALLED_VERSION" != "$LATEST_VERSION" ]; then
+        echo "📥 Instalando/Atualizando AWS CLI para versão $LATEST_VERSION..."
+
+        ARCH=$(uname -m)
+        case $ARCH in
+            x86_64)   AWS_ARCH="x86_64" ;;
+            aarch64)  AWS_ARCH="arm64" ;;
+            *)        echo "❌ Arquitetura $ARCH não suportada."; exit 1 ;;
+        esac
+
+        INSTALL_DIR="/c/Users/douglas.alves/awscli"
+        mkdir -p "$INSTALL_DIR"
+
+        AWS_URL="https://awscli.amazonaws.com/AWSCLIV2.msi"
+        TEMP_FILE="/tmp/awscliv2.msi"
+
+        curl -L "$AWS_URL" -o "$TEMP_FILE" || { echo "❌ Falha no download"; exit 1; }
+
+        echo "📦 Instalando AWS CLI..."
+        msiexec //i "$TEMP_FILE" //qn || { echo "❌ Falha na instalação"; exit 1; }
+
+        echo "✅ AWS CLI instalado/atualizado em $INSTALL_DIR"
+    else
+        echo "AWS CLI já está na versão mais recente."
+    fi
+
+    echo "🔒 Validando uso de SSL..."
+    aws configure set cli_follow_urlparam false
+    aws configure set ca_bundle /c/Windows/System32/drivers/etc/ssl/certs/ca-bundle.crt
+    echo "✅ SSL ativado para AWS CLI"
+}
+
+# ----------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------
+
 echo
 echo "📋 Versão do script de instalação de pacotes Use Bash: 1.0.0"
 
 
 list_parts() {
     echo "📦 Partes disponíveis:"
-    grep '^check_' "$0" | sed 's/(.*//'
-    echo
+    grep "helm_usebash"
+    echo "aws_gitbash"
+    echo "aws_gitbash"
+    echo "all"
     echo "Exemplo: $0 consulta_helm_usebash"
     echo
 }
@@ -123,6 +178,10 @@ start_opcao() {
             k9s_gitbash)
                 echo "🔄 Atualizando k9s..."
                 check_k9s_gitbash
+                ;;
+            aws_gitbash)
+                echo "🔄 Atualizando AWS CLI..."
+                check_aws_gitbash
                 ;;
             all)
                 echo "🔄 Executando todas as partes..."
