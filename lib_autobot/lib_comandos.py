@@ -7,6 +7,23 @@ import os
 from termcolor import colored
 from time import sleep
 import time
+import yaml
+
+# ------------------------------------------
+# libs - config
+
+def carregar_config():
+    # Caminho do arquivo atual (lib_comandos.py)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Caminho completo para o config.yaml na mesma pasta
+    config_path = os.path.join(base_dir, "config.yaml")
+
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"config.yaml não encontrado em: {config_path}")
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
 
 # ------------------------------------------
@@ -54,34 +71,24 @@ def ambiente_atual():
     return "linux"
 
 def comando_vscode():
-    ambientes = ambiente_atual()
+    cfg = carregar_config()
+    env = ambiente_atual()
 
-    # Caminhos usados por você:
-    caminho_windows = "C:/usebash/devops/autobot"
-    caminho_linux   = "/root/devops/automation-py/autobot"
+    if env == "windows":
+        path = cfg["paths"]["windows"]
+        cmd  = [cfg["vscode"]["windows_command"], "."]
+    else:
+        path = cfg["paths"]["linux"]
+        cmd  = [cfg["vscode"]["linux_command"], "."]
 
-    if ambientes == "windows":
-        caminho = caminho_windows
-        comando = ["code.cmd", "."]
-
-    elif ambientes == "wsl":
-        caminho = caminho_linux
-        comando = ["code", "."]
-
-    else:  # Linux puro
-        caminho = caminho_linux
-        comando = ["code", "."]
-
-    if not os.path.exists(caminho):
-        print(f"O caminho não existe no ambiente {ambientes}: {caminho}")
+    if not os.path.exists(path):
+        print(f"⚠ Caminho não existe para {env}: {path}")
         return
 
-    try:
-        os.chdir(caminho)
-        executar_comando(comando)
-        print(f"VSCode aberto ({ambientes}) no diretório: {caminho}")
-    except Exception as e:
-        print(f"Erro ao abrir VSCode: {e}")
+    os.chdir(path)
+    executar_comando(cmd)
+
+    print(f"✔ VSCode aberto ({env}) em: {path}")
 
 
 # ------------------------------------------
@@ -98,7 +105,13 @@ def comando_host():
     return f"{usuario}@{host}"
 
 def acao_para_ambiente_correto():
-    print(colored("Executando tarefa: Ação específica no ambiente esperado!", "green"))
+    print(colored("Executando tarefa:", "green"))
+    print ("✔  Ambiente correto detectado.")
 
 def acao_para_ambiente_errado():
-    print(colored("Ignorando tarefa: Ambiente não corresponde ao esperado.", "red"))
+    print(colored("Ignorando tarefa:", "red"))
+    print ("✘  Ambiente incorreto detectado.")
+
+
+
+

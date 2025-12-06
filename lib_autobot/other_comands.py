@@ -50,6 +50,9 @@ def verificar_ambiente_e_executar_versao():
     if usuario_host == "douglas@ACT9880":
         acao_para_ambiente_correto()
         listar_versao('ASRE cli', ['asre', 'version'])
+    elif usuario_host == "douglas.alves@ACT9880":
+        acao_para_ambiente_correto()
+        listar_versao('ASRE cli', ['asre', 'version'])
     else:
         acao_para_ambiente_errado()
 

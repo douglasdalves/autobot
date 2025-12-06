@@ -53,7 +53,6 @@ def menu():
             listar_credenciais()
             listar_perfis()
         elif opcao == '6':
-            list_version()
             verificar_ambiente_e_executar_versao()
         elif opcao == '7':
             dev_kube()

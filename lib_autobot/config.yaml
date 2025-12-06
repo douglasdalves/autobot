@@ -1,0 +1,8 @@
+paths:
+  windows: "C:/usebash/devops/autobot"
+  linux: "/root/devops/automation-py/autobot"
+
+vscode:
+  windows_command: "code.cmd"
+  linux_command: "code"
+
