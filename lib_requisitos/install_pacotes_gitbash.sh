@@ -7,7 +7,62 @@ set -e
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 
-#!/bin/bash
+check_py_install() {
+    echo "🔎 Verificando winget..."
+    if ! command -v winget >/dev/null 2>&1; then
+        echo "❌ winget não encontrado."
+        exit 1
+    fi
+    echo "✅ winget encontrado"
+
+    TARGET_ID="Python.Python.3.12"
+
+    echo
+    echo "🔎 Verificando se $TARGET_ID está instalado..."
+
+    if winget list --id "$TARGET_ID" --exact >/dev/null 2>&1; then
+        echo "✅ Python 3.12 já instalado — verificando atualização..."
+    else
+        echo "ℹ️ Python 3.12 não encontrado — instalando..."
+    fi
+
+    echo
+    echo "⬇️ Garantindo Python 3.12 (install/upgrade)..."
+    winget install \
+        --id "$TARGET_ID" \
+        --source winget \
+        --accept-source-agreements \
+        --accept-package-agreements \
+        --silent
+
+    echo
+    echo "🔧 Atualizando pip..."
+    python -m ensurepip --upgrade || true
+    python -m pip install --upgrade pip || true
+
+    echo
+    echo "📦 Instalando requirements.txt (se existir)..."
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    REQ_FILE="$SCRIPT_DIR/requirements.txt"
+
+    if [ -f "$REQ_FILE" ]; then
+        echo "➡️ Usando $REQ_FILE"
+        python -m pip install --upgrade -r "$REQ_FILE"
+    else
+        echo "ℹ️ requirements.txt não encontrado — pulando etapa."
+    fi
+
+    echo
+    echo "✅ Validação final:"
+    python --version
+    python3 --version || true
+
+    echo
+    echo "🎉 Python pronto e dependências aplicadas!"
+}
+
+
+# ----------------------------------------------------------------------
 
 # Função para verificar se helm está instalado
 helm_installed() {
@@ -85,14 +140,18 @@ check_k9s_gitbash() {
 # ----------------------------------------------------------------------
 
 echo
-echo "📋 Versão do script de instalação de pacotes Use Bash: 1.0.0"
+echo "📋 Versão do script de instalação de pacotes Use Bash: 1.0.2"
 
 
 list_parts() {
     echo "📦 Partes disponíveis:"
-    grep '^check_' "$0" | sed 's/(.*//'
-    echo
-    echo "Exemplo: $0 consulta_helm_usebash"
+    awk '
+        /^[[:space:]]*check_[a-zA-Z0-9_]+[[:space:]]*\(\)[[:space:]]*\{/ {
+            name=$1
+            gsub(/check_|\(\).*/, "", name)
+            print " - " name
+        }
+    ' "$0"
     echo
 }
 
@@ -123,6 +182,10 @@ start_opcao() {
             k9s_gitbash)
                 echo "🔄 Atualizando k9s..."
                 check_k9s_gitbash
+                ;;
+            py_install)
+                echo "🔄 Verificando/instalando Python..."
+                check_py_install
                 ;;
             all)
                 echo "🔄 Executando todas as partes..."

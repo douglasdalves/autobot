@@ -43,3 +43,11 @@ aws --version
 
 # brew
 sudo -u usobrew brew install nginx
+
+# usebash
+
+```bash
+nano ~/.curlrc
+--ssl-backend=schannel
+```
+
