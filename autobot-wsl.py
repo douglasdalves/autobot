@@ -30,13 +30,13 @@ def menu():
         print("1 - Start Docker")
         print("2 - Stop Docker")
         print("3 - Status Docker")
-        print("4 - Dados Docker")        
-        print("5 - Dados AWS CLI")
+        print("4 - Data Docker")        
+        print("5 - Data AWS CLI")
         print("6 - List Version")
-        print("7 - Dados EKS")
-        print("8 - Dados Helm")
-        print("9 - VS code")
-        print("10 - Sair")
+        print("7 - Data EKS")
+        print("8 - Data Helm")
+        print("9 - Open VS code")
+        print("10 - Exit\n")
 
         opcao = input("\nDigite o número da opção: ")
 
@@ -46,7 +46,6 @@ def menu():
             fun_stop_docker()
         elif opcao == '3':
             verificar_docker_running()
-            #executar_comando(['docker', 'ps','|', 'grep', 'portainerer'])
         elif opcao == '4':
             verificar_docker_dados()
         elif opcao == '5':
