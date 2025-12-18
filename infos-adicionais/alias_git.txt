@@ -5,3 +5,9 @@ alias consultasso='/c/usebash/devops/autobot/infos-adicionais/consultasso.sh'
 alias consultasaws='/c/usebash/devops/autobot/infos-adicionais/consultasaws.sh'
 alias consultascale='/c/usebash/devops/autobot/infos-adicionais/script_scale.sh'
 alias autobot='/c/usebash/devops/autobot/autobot-wsl.py'
+
+export PATH="$USERPROFILE/k9s:$PATH"
+
+
+winget install JanDeDobbeleer.OhMyPosh -s winget
+eval "$(oh-my-posh init bash --config ~/posh.json)"
