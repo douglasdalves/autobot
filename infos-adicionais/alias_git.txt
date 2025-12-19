@@ -1,13 +1,69 @@
+export PATH=$PATH:/c/Users/douglas.alves/k9s
+
+# Configuração para AWS CLI com SSO
+
+export AWS_CA_BUNDLE=/c/usebash/devops/access/amazonaws-ca-bundle.pem
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# alias autobot
+
+alias autobot='python /c/usebash/devops/autobot/autobot-wsl.py'
+
+# alias eks
+
+alias k=kubectl
+alias kns='kubectl config set-context --current --namespace'
+alias kctx='kubectl config use-context'
+alias kget='kubectl get'
+alias kpod='kubectl get pods'
+alias kdesc='kubectl describe'
+alias kdp='kubectl describe pod'
+alias kapply='kubectl apply -f'
+alias kdel='kubectl delete'
+alias kdf='kubectl delete -f'
+alias kexec='kubectl exec -it'
+alias kl='kubectl logs'
+alias klog='kubectl logs -f'
+alias kpf='kubectl port-forward'
+alias krestart='kubectl rollout restart'
+alias kdep='kubectl get deployments'
+alias kdd='kubectl describe deployment'
+alias kdr='kubectl delete deployment'
+alias kroll='kubectl rollout restart deployment'
+alias kru='kubectl rollout undo deployment'
+alias kall='kubectl get all'
+alias ktop='kubectl top'
+alias kscal='kubectl scale deployment'
+alias kscal0='kubectl scale --replicas=0 deploy'
+alias kscal1='kubectl scale --replicas=1 deploy'
+alias kconf='kubectl config view'
+alias kstatus='kubectl get pods -A --field-selector=status.phase=Running'
+alias knstatus="kubectl get pods -A | grep -v 'Running'"
+
+# alias scripts
+
 alias testconexao='/c/usebash/devops/autobot/infos-adicionais/analises.sh'
 alias consultascli='/c/usebash/devops/autobot/infos-adicionais/consultascli.sh'
 alias consultashelm='/c/usebash/devops/autobot/infos-adicionais/consultashelm.sh'
 alias consultasso='/c/usebash/devops/autobot/infos-adicionais/consultasso.sh'
 alias consultasaws='/c/usebash/devops/autobot/infos-adicionais/consultasaws.sh'
 alias consultascale='/c/usebash/devops/autobot/infos-adicionais/script_scale.sh'
-alias autobot='/c/usebash/devops/autobot/autobot-wsl.py'
+alias consultahost='/c/usebash/devops/autobot/infos-adicionais/consultahost.sh'
+alias cadastroeks='/c/usebash/devops/access/cadastrar_contextos_eks_oficial.sh'
 
-export PATH="$USERPROFILE/k9s:$PATH"
+# testes
+
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# outros
+export PATH=$HOME/bin:$PATH
 
 
 winget install JanDeDobbeleer.OhMyPosh -s winget
 eval "$(oh-my-posh init bash --config ~/posh.json)"
+
+
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
