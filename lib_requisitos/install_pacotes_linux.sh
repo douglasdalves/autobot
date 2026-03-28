@@ -10,8 +10,8 @@ set -e  # Para o script em caso de erro
 check_upgrade() {
     echo
     echo "✅ Atualizando pacotes do sistema..."
-    sudo apt-get update -y
-    sudo apt-get upgrade -y
+    sudo apt-get update -y -o Acquire::ForceIPv4=true
+    sudo apt-get upgrade -y -o Acquire::ForceIPv4=true
     echo "✅ Pacotes do sistema atualizados com sucesso."
     echo
 }
@@ -39,7 +39,7 @@ check_python3() {
 
     # Instalar pacotes do arquivo requirements.txt
     echo "📦 Instalando pacotes do requirements.txt..."
-    pip3 install -r requirements.txt --root-user-action=ignore --quiet || {
+    pip3 install -r requirements.txt --root-user-action=ignore --break-system-packages --quiet || {
         echo "❌ Erro ao instalar pacotes do requirements.txt"
         exit 1
     }
