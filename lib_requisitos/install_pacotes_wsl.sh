@@ -104,6 +104,35 @@ check_kubectl() {
 
 # ----------------------------------------------------------------------
 
+# DOCKER
+
+check_docker() {
+    if command -v docker &> /dev/null; then
+        echo "✅ Docker já está instalado."
+        echo "Versão instalada:"
+        docker --version
+        echo
+        echo "🔄 Atualizando Docker..."
+        sudo apt update
+        sudo apt upgrade docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+        echo "✅ Docker atualizado com sucesso!"
+    else
+        echo "📦 Instalando Docker..."
+        sudo apt update
+        sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        sudo apt update
+        sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+        sudo usermod -aG docker $USER
+        echo ""
+        echo "✅ Docker instalado com sucesso!"
+        docker --version
+        echo ""
+        echo "⚠️  Execute: newgrp docker (ou reinicie o terminal para aplicar permissões de grupo)"
+    fi
+}
+
 # K9S
 
 # Diretórios temporários
@@ -208,11 +237,16 @@ start_opcao() {
                 echo "🔍 Verificando k9s..."
                 check_k9s
                 ;;
+            docker)
+                echo "🔍 Verificando Docker..."
+                check_docker
+                ;;
             all)
                 echo "🔍 Verificando todos os pacotes..."
                 check_aws_cli
                 check_kubectl
                 check_k9s
+                check_docker
                 ;;
             *)
                 echo "❌ Parte desconhecida: $part"
