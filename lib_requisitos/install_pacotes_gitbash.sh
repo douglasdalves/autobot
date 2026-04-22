@@ -135,6 +135,112 @@ check_k9s_gitbash() {
     echo "➡️ Adicione $INSTALL_DIR ao PATH para usar o comando 'k9s'"
 }
 
+check_kubectx_kubens_gitbash() {
+    echo "🔍 Verificando kubectx e kubens no Git Bash..."
+
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64)   KUBECTX_ARCH="x86_64" ;;
+        aarch64)  KUBECTX_ARCH="arm64" ;;
+        *)        echo "❌ Arquitetura $ARCH não suportada."; exit 1 ;;
+    esac
+
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/ahmetb/kubectx/releases/latest | grep tag_name | cut -d '"' -f 4)
+
+    INSTALL_DIR="/c/Users/douglas.alves/kubectx"
+    mkdir -p "$INSTALL_DIR"
+
+    KUBECTX_URL="https://github.com/ahmetb/kubectx/releases/download/${LATEST_VERSION}/kubectx_${LATEST_VERSION}_windows_${KUBECTX_ARCH}.zip"
+    KUBENS_URL="https://github.com/ahmetb/kubectx/releases/download/${LATEST_VERSION}/kubens_${LATEST_VERSION}_windows_${KUBECTX_ARCH}.zip"
+    TEMP_KUBECTX_FILE="/tmp/kubectx.zip"
+    TEMP_KUBENS_FILE="/tmp/kubens.zip"
+
+    echo "📥 Baixando kubectx versão $LATEST_VERSION para Windows..."
+    curl -fL "$KUBECTX_URL" -o "$TEMP_KUBECTX_FILE" || { echo "❌ Falha no download do kubectx"; exit 1; }
+
+    echo "📥 Baixando kubens versão $LATEST_VERSION para Windows..."
+    curl -fL "$KUBENS_URL" -o "$TEMP_KUBENS_FILE" || { echo "❌ Falha no download do kubens"; exit 1; }
+
+    echo "📦 Extraindo kubectx..."
+    unzip -o "$TEMP_KUBECTX_FILE" -d "$INSTALL_DIR" || { echo "❌ Falha ao extrair kubectx"; exit 1; }
+
+    echo "📦 Extraindo kubens..."
+    unzip -o "$TEMP_KUBENS_FILE" -d "$INSTALL_DIR" || { echo "❌ Falha ao extrair kubens"; exit 1; }
+
+    echo "✅ kubectx e kubens instalados em $INSTALL_DIR"
+    echo "➡️ Adicione $INSTALL_DIR ao PATH para usar os comandos 'kubectx' e 'kubens'"
+}
+
+check_kubectl_gitbash() {
+    echo "🔍 Verificando kubectl no Git Bash..."
+
+    if ! command -v winget >/dev/null 2>&1; then
+        echo "❌ winget não encontrado."
+        exit 1
+    fi
+
+    TARGET_ID="Kubernetes.kubectl"
+
+    if winget list --id "$TARGET_ID" --exact >/dev/null 2>&1; then
+        echo "✅ kubectl já instalado — verificando atualização..."
+    else
+        echo "ℹ️ kubectl não encontrado — instalando..."
+    fi
+
+    echo "⬇️ Garantindo kubectl (install/upgrade)..."
+    if winget install \
+        --id "$TARGET_ID" \
+        --source winget \
+        --accept-source-agreements \
+        --accept-package-agreements \
+        --silent; then
+        echo "✅ kubectl pronto para uso via winget!"
+        return
+    fi
+
+    echo "⚠️ winget falhou ao baixar kubectl. Tentando fallback direto..."
+
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64)   KUBECTL_ARCH="amd64" ;;
+        aarch64)  KUBECTL_ARCH="arm64" ;;
+        *)        echo "❌ Arquitetura $ARCH não suportada."; exit 1 ;;
+    esac
+
+    LATEST_VERSION=$(curl -fLs https://dl.k8s.io/release/stable.txt || true)
+    if [ -z "$LATEST_VERSION" ]; then
+        LATEST_VERSION=$(curl -fLs https://cdn.dl.k8s.io/release/stable.txt || true)
+    fi
+
+    if [ -z "$LATEST_VERSION" ]; then
+        echo "❌ Não foi possível obter a versão estável do kubectl."
+        exit 1
+    fi
+
+    INSTALL_DIR="/c/Users/douglas.alves/kubectl"
+    mkdir -p "$INSTALL_DIR"
+    TARGET_FILE="$INSTALL_DIR/kubectl.exe"
+
+    URL_1="https://dl.k8s.io/release/${LATEST_VERSION}/bin/windows/${KUBECTL_ARCH}/kubectl.exe"
+    URL_2="https://cdn.dl.k8s.io/release/${LATEST_VERSION}/bin/windows/${KUBECTL_ARCH}/kubectl.exe"
+    URL_3="https://storage.googleapis.com/kubernetes-release/release/${LATEST_VERSION}/bin/windows/${KUBECTL_ARCH}/kubectl.exe"
+
+    if curl -fL "$URL_1" -o "$TARGET_FILE"; then
+        :
+    elif curl -fL "$URL_2" -o "$TARGET_FILE"; then
+        :
+    elif curl -fL "$URL_3" -o "$TARGET_FILE"; then
+        :
+    else
+        echo "❌ Falha no download do kubectl em todas as URLs de fallback."
+        exit 1
+    fi
+
+    chmod +x "$TARGET_FILE" 2>/dev/null || true
+    echo "✅ kubectl instalado em $TARGET_FILE"
+    echo "➡️ Adicione $INSTALL_DIR ao PATH para usar o comando 'kubectl'"
+}
+
 #echo 'export PATH=$PATH:/c/Users/'"$USERNAME"'/k9s' >> ~/.bashrc
 
 # ----------------------------------------------------------------------
@@ -193,7 +299,7 @@ check_aws_gitbash() {
 # ----------------------------------------------------------------------
 
 echo
-echo "📋 Versão do script de instalação de pacotes Use Bash: 1.0.2"
+echo "📋 Versão do script de instalação de pacotes Use Bash: 1.0.4"
 
 
 list_parts() {
@@ -236,6 +342,14 @@ start_opcao() {
                 echo "🔄 Atualizando k9s..."
                 check_k9s_gitbash
                 ;;
+            kubectx_kubens_gitbash|kubectx_gitbash|kubens_gitbash)
+                echo "🔄 Instalando/atualizando kubectx e kubens..."
+                check_kubectx_kubens_gitbash
+                ;;
+            kubectl_gitbash)
+                echo "🔄 Instalando/atualizando kubectl..."
+                check_kubectl_gitbash
+                ;;
             py_install)
                 echo "🔄 Verificando/instalando Python..."
                 check_py_install
@@ -244,6 +358,8 @@ start_opcao() {
                 echo "🔄 Executando todas as partes..."
                 check_helm_usebash
                 check_k9s_gitbash
+                check_kubectx_kubens_gitbash
+                check_kubectl_gitbash
                 ;;
             *)
                 echo "❌ Parte desconhecida: $part"

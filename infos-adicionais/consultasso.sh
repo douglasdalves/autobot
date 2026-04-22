@@ -35,8 +35,8 @@ function conectacao_sso {
         if [ $? -eq 0 ]; then
             echo "✅ Conexão SSO bem-sucedida."
             # Executa o comando para verificar a identidade do usuário com o perfil SSO
-            echo "🔍 Executando 'aws sts get-caller-identity' com o perfil '$PROFILE'..."
-            aws sts get-caller-identity --profile "$PROFILE"
+            #echo "🔍 Executando 'aws sts get-caller-identity' com o perfil '$PROFILE'..."
+            #aws sts get-caller-identity --profile "$PROFILE"
             if [ $? -ne 0 ]; then
                 echo "❌ Falha ao executar 'aws sts get-caller-identity'. Verifique se o perfil SSO está configurado corretamente."
                 exit 1
