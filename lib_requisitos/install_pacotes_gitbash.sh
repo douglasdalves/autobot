@@ -209,10 +209,6 @@ check_kubectl_gitbash() {
 
     LATEST_VERSION=$(curl -fLs https://dl.k8s.io/release/stable.txt || true)
     if [ -z "$LATEST_VERSION" ]; then
-        LATEST_VERSION=$(curl -fLs https://cdn.dl.k8s.io/release/stable.txt || true)
-    fi
-
-    if [ -z "$LATEST_VERSION" ]; then
         echo "❌ Não foi possível obter a versão estável do kubectl."
         exit 1
     fi
@@ -221,18 +217,11 @@ check_kubectl_gitbash() {
     mkdir -p "$INSTALL_DIR"
     TARGET_FILE="$INSTALL_DIR/kubectl.exe"
 
-    URL_1="https://dl.k8s.io/release/${LATEST_VERSION}/bin/windows/${KUBECTL_ARCH}/kubectl.exe"
-    URL_2="https://cdn.dl.k8s.io/release/${LATEST_VERSION}/bin/windows/${KUBECTL_ARCH}/kubectl.exe"
-    URL_3="https://storage.googleapis.com/kubernetes-release/release/${LATEST_VERSION}/bin/windows/${KUBECTL_ARCH}/kubectl.exe"
+    KUBECTL_URL="https://storage.googleapis.com/kubernetes-release/release/${LATEST_VERSION}/bin/windows/${KUBECTL_ARCH}/kubectl.exe"
 
-    if curl -fL "$URL_1" -o "$TARGET_FILE"; then
-        :
-    elif curl -fL "$URL_2" -o "$TARGET_FILE"; then
-        :
-    elif curl -fL "$URL_3" -o "$TARGET_FILE"; then
-        :
-    else
-        echo "❌ Falha no download do kubectl em todas as URLs de fallback."
+    echo "📥 Baixando kubectl ${LATEST_VERSION} via storage.googleapis.com..."
+    if ! curl -fL "$KUBECTL_URL" -o "$TARGET_FILE"; then
+        echo "❌ Falha no download do kubectl."
         exit 1
     fi
 
